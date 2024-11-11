@@ -1,5 +1,6 @@
   // import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:login/src/routes/router.dart';
 // import 'package:flutter/services.dart' as rootBundle;
 import 'package:provider/provider.dart';
 // import ''
@@ -21,6 +22,7 @@ void main() {
     ChangeNotifierProvider(
       create: (_) => SessionProvider(),
       child: MyApp(),
+
     ),
   );
 }
@@ -41,7 +43,10 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Your App',
         debugShowCheckedModeBanner: false,
-        home: SplashScreen(),
+        // home: SplashScreen(),
+        initialRoute: '/',
+        onGenerateRoute: RouteGenerator.generateRoute,
+
         // Check session state here
       ),
     );
@@ -62,27 +67,30 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void _checkSession() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? storedToken = prefs.getString('token');
     String? userToken = prefs.getString('username');
+    String? passwordToken = prefs.getString('password');  // Only retrieving userToken
+// Only retrieving userToken
 
     final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
 
-    if (storedToken != null && userToken !=null) {
-      // If token exists, set it in the session provider
-      sessionProvider.register(storedToken,userToken);
+    if (userToken != null && passwordToken != null) {
+      // If userToken exists, register the session
+      sessionProvider.register(userToken, passwordToken);  // Register with only userToken
 
       // Navigate to HomePage
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => HomePage()), // You can retrieve the username as needed
-      );
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(
+      //       builder: (context) => HomePage()), // Navigate to HomePage after successful login
+      // );
+      Navigator.pushReplacementNamed(context, '/homepage');
     } else {
-      // If no token, redirect to LoginPage
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => LoginPage()),
-      );
+      // If userToken is null, redirect to LoginPage
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => LoginPage()),
+      // );
+      Navigator.pushReplacementNamed(context, '/loginpage');
     }
   }
 

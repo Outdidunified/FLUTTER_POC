@@ -16,12 +16,13 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  String message = '';
+  // String message = '';
   bool _isobsecure = true;
+
   // Track if the data is loaded
 
   Future<Map<String, dynamic>> login(String username, String password) async {
-    final Uri url = Uri.parse('http://192.168.1.37:5000/login');
+    final Uri url = Uri.parse('http://192.168.1.37:5000/api/user/signin');
 
     if (username.isEmpty ||
         !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(username)) {
@@ -97,15 +98,17 @@ class _LoginPageState extends State<LoginPage> {
       final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
 
       // Get the token from the response
-      String token = response['token']; // Assuming the token is returned by the API
+      // String token = response['token']; // Assuming the token is returned by the API
 
       // Save token and username in SessionProvider
-      sessionProvider.register(token, username); // Pass both the token and username
+      sessionProvider.register(username, password); // Pass both the token and username
 
       // Save token and username in SharedPreferences for persistence
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', token);
+      // await prefs.setString('token', token);
       await prefs.setString('username', username);
+      await prefs.setString('password', password);
+
       setState(() {
         // Show login success dialog
         showDialog(
@@ -123,6 +126,7 @@ class _LoginPageState extends State<LoginPage> {
                       MaterialPageRoute(
                           builder: (context) => HomePage()),
                     );
+                    // Navigator.pushNamed(context, '/homePage');
                   },
                 ),
               ],

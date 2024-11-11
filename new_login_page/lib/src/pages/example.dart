@@ -6,6 +6,10 @@ import 'login.dart';
 import './video_player_page.dart';
 import './image_page.dart';
 import './gifs_page.dart';
+import 'tabpage.dart';
+import 'drawer_page.dart';
+import 'todo_page.dart';
+import 'return_data.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -22,7 +26,7 @@ class _HomePageState extends State<HomePage> {
 
     // Clear the token from SharedPreferences
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove('token'); // Remove the token
+    await prefs.remove('username'); // Remove the token
 
     // Clear the session in the SessionProvider
     sessionProvider.logout(); // Log out from the provider session
@@ -52,6 +56,7 @@ class _HomePageState extends State<HomePage> {
           )
         ],
       ),
+
       body: Container(
         decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -77,12 +82,14 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 InkWell(
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>AssetVideoPlayerScreen()));
-                    },
-      child:Text("Click here to play the videos", style: TextStyle(color: Colors.white, ),)),
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder:(context)=>Tabpage()));
+                  },
+                  child: Text("Click here to move to next page", style: TextStyle(color: Colors.white),),
+                ),
                 SizedBox(width: 10,),
-                Icon(Icons.video_file, color: Colors.white,),
+
+                // Icon(Icons.gif_box_outlined, color: Colors.white,),
 
               ],
             ),
@@ -92,13 +99,13 @@ class _HomePageState extends State<HomePage> {
               children: [
                 InkWell(
                   onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder:(context)=>ImageAlbumScreen()));
+                    Navigator.push(context, MaterialPageRoute(builder:(context)=>DrawerPage()));
                   },
-                  child: Text("Click here to see the images", style: TextStyle(color: Colors.white),),
+                  child: Text("Click here to move to Drawer page", style: TextStyle(color: Colors.white),),
                 ),
                 SizedBox(width: 10,),
 
-                Icon(Icons.image, color: Colors.white,),
+                // Icon(Icons.gif_box_outlined, color: Colors.white,),
 
               ],
             ),
@@ -108,13 +115,29 @@ class _HomePageState extends State<HomePage> {
               children: [
                 InkWell(
                   onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder:(context)=>GifVideoPage()));
+                    Navigator.push(context, MaterialPageRoute(builder:(context)=>TodosScreen()));
                   },
-                  child: Text("Click here to see the gifs", style: TextStyle(color: Colors.white),),
+                  child: Text("Click here!(for sending data from one screen to other screen) ", style: TextStyle(color: Colors.white),),
                 ),
                 SizedBox(width: 10,),
 
-                Icon(Icons.gif_box_outlined, color: Colors.white,),
+                // Icon(Icons.gif_box_outlined, color: Colors.white,),
+
+              ],
+            ),
+            SizedBox(height: 20,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                InkWell(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder:(context)=>HomeScreen()));
+                  },
+                  child: Text("Click here!(for returning data from one screen to other screen) ", style: TextStyle(color: Colors.white),),
+                ),
+                SizedBox(width: 10,),
+
+                // Icon(Icons.gif_box_outlined, color: Colors.white,),
 
               ],
             )
