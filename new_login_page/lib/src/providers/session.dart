@@ -20,6 +20,7 @@ class SessionProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+
   void register(String token, String username) {
     // _token = token;
     _username = username;

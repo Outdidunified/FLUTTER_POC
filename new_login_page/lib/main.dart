@@ -1,4 +1,4 @@
-// import 'dart:convert';
+  // import 'dart:convert';
 import 'package:flutter/material.dart';
 // import 'package:flutter/services.dart' as rootBundle;
 import 'package:provider/provider.dart';
@@ -11,6 +11,10 @@ import './src/pages/login.dart';
 import './src/pages/example.dart';
 // import './src/pages/register.dart';
 import './src/providers/session.dart';
+import './src/pages/gifs_page.dart';
+import './src/pages/video_player_page.dart';
+import './src/pages/image_page.dart';
+
 
 void main() {
   runApp(
@@ -37,7 +41,8 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Your App',
         debugShowCheckedModeBanner: false,
-        home: SplashScreen(), // Check session state here
+        home: SplashScreen(),
+        // Check session state here
       ),
     );
   }
@@ -89,3 +94,7 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 }
+
+
+
+

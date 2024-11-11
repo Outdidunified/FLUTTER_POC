@@ -19,10 +19,10 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _passwordcontroller = TextEditingController();
   final TextEditingController _mailcontroller = TextEditingController();
   final TextEditingController _numbercontroller = TextEditingController();
-
+  bool _isobsecure = true;
   Future<Map<String, dynamic>> register(String username, String password,
       String email, String phoneNumber) async {
-    final Uri url = Uri.parse('http://192.168.1.28:5000/signup');
+    final Uri url = Uri.parse('http://192.168.1.37:5000/signup');
 
     // Basic validation checks
     if (username.isEmpty) {
@@ -115,11 +115,11 @@ class _RegisterPageState extends State<RegisterPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(title),
+          title: Text(title, style: TextStyle(color: Color(0xffB81736)),),
           content: Text(content),
           actions: [
             TextButton(
-              child: Text("OK"),
+              child: Text("OK", style: TextStyle(color: Color(0xff281537)),),
               onPressed: () {
                 Navigator.of(context)
                     .pop(); // Dismiss the dialog and stay on the same page
@@ -135,11 +135,18 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage(
-                'assets/images/bg1.jpg',
-              ),
-              fit: BoxFit.cover)),
+          // image: DecorationImage(
+          //     image: AssetImage(
+          //       'assets/images/bg1.jpg',
+          //     ),
+          //     fit: BoxFit.cover)
+        gradient: LinearGradient(
+            colors:[
+              Color(0xffB81736),
+              Color(0xff281537)
+            ]
+        )
+      ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         // appBar: AppBar(
@@ -164,6 +171,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 TextField(
                   controller: _usercontroller,
                   decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.person, color:Color(0xffB81736),
+                    ),
                       fillColor: Colors.white,
                       filled: true,
                       focusedBorder: OutlineInputBorder(
@@ -175,7 +184,14 @@ class _RegisterPageState extends State<RegisterPage> {
                 SizedBox(height: 20),
                 TextField(
                   controller: _passwordcontroller,
+                  obscureText: _isobsecure,
                   decoration: InputDecoration(
+                    prefixIcon: IconButton(onPressed: (){
+                      setState(() {
+                        _isobsecure = !_isobsecure;
+                      });
+                    }, icon: Icon(Icons.remove_red_eye, color:Color(0xffB81736)),
+                        ),
                       fillColor: Colors.white,
                       filled: true,
                       focusedBorder: OutlineInputBorder(
@@ -188,6 +204,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 TextField(
                   controller: _mailcontroller,
                   decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.email, color:Color(0xffB81736)),
                       fillColor: Colors.white,
                       filled: true,
                       focusedBorder: OutlineInputBorder(
@@ -198,8 +215,11 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 SizedBox(height: 20),
                 TextField(
+                  
                   controller: _numbercontroller,
                   decoration: InputDecoration(
+
+                    prefixIcon: Icon(Icons.phone, color:Color(0xffB81736)),
                       fillColor: Colors.white,
                       filled: true,
                       focusedBorder: OutlineInputBorder(
@@ -210,7 +230,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
-                    onPressed: _handleRegister, child: Text("Register"))
+                    onPressed: _handleRegister, child: Text("Register", style: TextStyle(color: Color(0xffB81736)),))
               ],
             ),
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:login/src/themes/image.dart';
 import 'example.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
@@ -16,10 +17,11 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   String message = '';
+  bool _isobsecure = true;
   // Track if the data is loaded
 
   Future<Map<String, dynamic>> login(String username, String password) async {
-    final Uri url = Uri.parse('http://192.168.1.28:5000/login');
+    final Uri url = Uri.parse('http://192.168.1.37:5000/login');
 
     if (username.isEmpty ||
         !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(username)) {
@@ -110,10 +112,11 @@ class _LoginPageState extends State<LoginPage> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text("Login Successful"),
+              backgroundColor: Colors.white,
+              title: Text("Login Successful", style: TextStyle(color: Color(0xffB81736)),),
               actions: [
                 TextButton(
-                  child: Text("OK"),
+                  child: Text("OK", style: TextStyle(color: Color(0xff281537))),
                   onPressed: () async {
                     Navigator.push(
                       context,
@@ -140,12 +143,22 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage(
-                'assets/images/bg1.jpg',
-              ),
-              fit: BoxFit.cover)),
+          // image: DecorationImage(
+          //     image: AssetImage(
+          //       'assets/images/bg1.jpg',
+          //     ),
+          //     fit: BoxFit.cover)
+          gradient: LinearGradient(
+              colors:[
+                Color(0xffB81736),
+                Color(0xff281537)
+              ]
+          )
+      ),
       child: Scaffold(
+        // appBar: AppBar(
+        //   // title: Logo(),
+        // ),
         backgroundColor: Colors.transparent,
         // appBar: AppBar(title: Text("Login")),
         body: Padding(
@@ -157,8 +170,10 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  // Image.asset("assets/images/logo_test.jpg", height: 40,width: 40,),
+                  // Icon(Icons.youtube_searched_for),
                   Text(
-                    "Welcome Back",
+                    "Login To Your Account",
                     style: TextStyle(
                         fontSize: 30,
                         fontWeight: FontWeight.bold,
@@ -170,6 +185,7 @@ class _LoginPageState extends State<LoginPage> {
                   TextField(
                     controller: _usernameController,
                     decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.email, color:Color(0xffB81736)),
                       fillColor: Colors.white,
                       filled: true,
                       focusedBorder: OutlineInputBorder(
@@ -183,8 +199,17 @@ class _LoginPageState extends State<LoginPage> {
                     height: 20,
                   ),
                   TextField(
+
                     controller: _passwordController,
+                    obscureText: _isobsecure,
                     decoration: InputDecoration(
+                      prefixIcon: IconButton(onPressed: (){
+                        setState(() {
+                          _isobsecure = !_isobsecure;
+
+                        });
+                      }, icon: Icon(Icons.remove_red_eye_outlined,color:Color(0xffB81736))
+                      ),
                       fillColor: Colors.white,
                       filled: true,
                       focusedBorder: OutlineInputBorder(
@@ -193,31 +218,30 @@ class _LoginPageState extends State<LoginPage> {
                           borderRadius: BorderRadius.circular(11)),
                       hintText: "Enter your password",
                     ),
-                    obscureText: true,
                   ),
                   SizedBox(
                     height: 20,
                   ),
-                  Row(
+                  Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       ElevatedButton(
                         onPressed:
                             _handleLogin, // Enable login only when data is loaded
-                        child: Text("Login"),
-                      ),
+                        child: Text("Login", style: TextStyle(color: Color(0xffB81736)),
+                        )),
                       SizedBox(
-                        width: 20,
+                        height: 20,
                       ),
-                      ElevatedButton(
-                        onPressed: () {
+                      InkWell(
+                        onTap: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => RegisterPage()));
                         }, // Enable login only when data is loaded
-                        child: Text("Register"),
+                        child: Text("Are you new user? Register here", style: TextStyle(color: Colors.white),),
                       ),
                     ],
                   ),
