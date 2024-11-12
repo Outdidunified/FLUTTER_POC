@@ -22,7 +22,7 @@ class _LoginPageState extends State<LoginPage> {
   // Track if the data is loaded
 
   Future<Map<String, dynamic>> login(String username, String password) async {
-    final Uri url = Uri.parse('http://192.168.1.37:5000/api/user/signin');
+    final Uri url = Uri.parse('http://192.168.1.22:5000/api/user/signin');
 
     if (username.isEmpty ||
         !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(username)) {

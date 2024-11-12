@@ -26,7 +26,7 @@ class _AssetVideoPlayerScreenState extends State<AssetVideoPlayerScreen> {
     super.initState();
   }
 
-  // Method to update the video when a new one is selected
+  // Method to initialize and play the selected video
   void _playVideo(int index) {
     setState(() {
       currentVideoIndex = index;
@@ -38,9 +38,22 @@ class _AssetVideoPlayerScreenState extends State<AssetVideoPlayerScreen> {
     });
   }
 
+  // Method to stop the video and reset the state
+  void _stopVideo() {
+    setState(() {
+      _controller.pause(); // Pause the video
+      _controller.seekTo(Duration.zero); // Reset to the start
+      _controller.dispose(); // Dispose the controller to free resources
+      currentVideoIndex = -1; // No video is selected now
+    });
+  }
+
   @override
   void dispose() {
-    _controller.dispose(); // Clean up the controller
+    // Clean up the controller when the widget is disposed
+    if (currentVideoIndex != -1) {
+      _controller.dispose();
+    }
     super.dispose();
   }
 
@@ -75,7 +88,14 @@ class _AssetVideoPlayerScreenState extends State<AssetVideoPlayerScreen> {
               child: Column(
                 children: List.generate(videoFiles.length, (index) {
                   return GestureDetector(
-                    onTap: () => _playVideo(index),
+                    onTap: () {
+                      // If the same video is clicked again, stop the video
+                      if (currentVideoIndex == index) {
+                        _stopVideo();
+                      } else {
+                        _playVideo(index);
+                      }
+                    },
                     child: Card(
                       margin: EdgeInsets.symmetric(vertical: 5),
                       child: ListTile(
@@ -95,9 +115,12 @@ class _AssetVideoPlayerScreenState extends State<AssetVideoPlayerScreen> {
           ? FloatingActionButton(
         onPressed: () {
           setState(() {
-            _controller.value.isPlaying
-                ? _controller.pause()
-                : _controller.play();
+            // If the video is playing, pause it, otherwise play it
+            if (_controller.value.isPlaying) {
+              _controller.pause();
+            } else {
+              _controller.play();
+            }
           });
         },
         child: Icon(

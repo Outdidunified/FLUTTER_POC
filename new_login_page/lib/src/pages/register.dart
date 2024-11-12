@@ -22,7 +22,7 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _isobsecure = true;
   Future<Map<String, dynamic>> register(String username, String password,
       String email, String phoneNumber) async {
-    final Uri url = Uri.parse('http://192.168.1.37:5000/api/user/createAccount');
+    final Uri url = Uri.parse('http://192.168.1.22:5000/api/user/createAccount');
 
     // Basic validation checks
     if (username.isEmpty) {

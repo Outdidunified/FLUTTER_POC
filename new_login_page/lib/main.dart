@@ -35,23 +35,23 @@ void main() {
 //   }
 // }
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => SessionProvider(),
-      child: MaterialApp(
-        title: 'Your App',
-        debugShowCheckedModeBanner: false,
-        // home: SplashScreen(),
-        initialRoute: '/',
-        onGenerateRoute: RouteGenerator.generateRoute,
+  class MyApp extends StatelessWidget {
+    @override
+    Widget build(BuildContext context) {
+      return ChangeNotifierProvider(
+        create: (context) => SessionProvider(),
+        child: MaterialApp(
+          title: 'Your App',
+          debugShowCheckedModeBanner: false,  // This will remove the debug banner from all pages
+          initialRoute: '/',  // The first screen to show when the app starts
+          onGenerateRoute: RouteGenerator.generateRoute,  // Custom route generator
 
-        // Check session state here
-      ),
-    );
+          // Check session state here if needed
+        ),
+      );
+    }
   }
-}
+
 
 class SplashScreen extends StatefulWidget {
   @override

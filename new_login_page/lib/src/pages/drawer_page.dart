@@ -13,34 +13,13 @@ class _DrawerPageState extends State<DrawerPage> {
   TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
     Text('Dashboard Page', style: optionStyle,),
-    Text(
-      'Contacts Page',
-      style: optionStyle,
-    ),
-    Text(
-      'Events Page',
-      style: optionStyle,
-    ),
-    Text(
-      'Notes Page',
-      style: optionStyle,
-    ),
-    Text(
-      'Settings Page',
-      style: optionStyle,
-    ),
-    Text(
-      'Notification Page',
-      style: optionStyle,
-    ),
-    Text(
-      'Privacy Policy',
-      style: optionStyle,
-    ),
-    Text(
-      'Feedback Page',
-      style: optionStyle,
-    ),
+    Text('Contacts Page', style: optionStyle,),
+    Text('Events Page', style: optionStyle,),
+    Text('Notes Page', style: optionStyle,),
+    Text('Settings Page', style: optionStyle,),
+    Text('Notification Page', style: optionStyle,),
+    Text('Privacy Policy', style: optionStyle,),
+    Text('Feedback Page', style: optionStyle,),
   ];
 
   void _onItemTapped(int index){

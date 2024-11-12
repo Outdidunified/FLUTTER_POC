@@ -10,6 +10,7 @@ import 'tabpage.dart';
 import 'drawer_page.dart';
 import 'todo_page.dart';
 import 'return_data.dart';
+import 'url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -135,12 +136,23 @@ class _HomePageState extends State<HomePage> {
                   },
                   child: Text("Click here!(for returning data from one screen to other screen) ", style: TextStyle(color: Colors.white),),
                 ),
-                SizedBox(width: 10,),
 
-                // Icon(Icons.gif_box_outlined, color: Colors.white,),
 
               ],
-            )
+            ),
+            SizedBox(height: 20,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                InkWell(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder:(context)=>UrlLauncher()));
+                  },
+                  child: Text("Click here to check urls ", style: TextStyle(color: Colors.white),),
+                ),
+
+              ],
+            ),
           ],
         ),
       ),
