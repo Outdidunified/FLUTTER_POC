@@ -11,7 +11,6 @@ class SessionProvider extends ChangeNotifier {
   String get username => _username;
   String get password => _password;
 
-
   SessionProvider() {
     _loadSession(); // Load session data at initialization
   }
@@ -24,7 +23,6 @@ class SessionProvider extends ChangeNotifier {
 // Load username
     notifyListeners();
   }
-
 
   void register(String token, String username) {
     // _token = token;
@@ -45,3 +43,4 @@ class SessionProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+

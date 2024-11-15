@@ -11,6 +11,7 @@ import 'drawer_page.dart';
 import 'todo_page.dart';
 import 'return_data.dart';
 import 'url_launcher.dart';
+import 'analytic_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -146,9 +147,9 @@ class _HomePageState extends State<HomePage> {
               children: [
                 InkWell(
                   onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder:(context)=>UrlLauncher()));
+                    Navigator.push(context, MaterialPageRoute(builder:(context)=>AnalyticsChart()));
                   },
-                  child: Text("Click here to check urls ", style: TextStyle(color: Colors.white),),
+                  child: Text("Move to Analytic page", style: TextStyle(color: Colors.white),),
                 ),
 
               ],
