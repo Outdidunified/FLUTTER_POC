@@ -9,83 +9,116 @@ class Triplist extends StatefulWidget {
   State<Triplist> createState() => _TriplistState();
 }
 
-class _TriplistState extends State<Triplist> {
-   List <Widget> _tripTiles = [];
+class _TriplistState extends State<Triplist> with SingleTickerProviderStateMixin {
+  List<Widget> _tripTiles = [];
   final GlobalKey<AnimatedListState> _listkey = GlobalKey<AnimatedListState>();
+  late AnimationController _controller;
+  late List<Animation<Offset>> _animations;
+  final List<Trip> _trips = [
+    Trip(title: 'Beach Paradise', price: '350', nights: '3', img: 'beach.png'),
+    Trip(title: 'City Break', price: '400', nights: '5', img: 'city.png'),
+    Trip(title: 'Ski Adventure', price: '750', nights: '2', img: 'ski.png'),
+    Trip(title: 'Space Blast', price: '600', nights: '4', img: 'space.png'),
+  ];
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_){
+
+    // Initialize AnimationController
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    );
+
+    // Create staggered animations
+    _animations = List.generate(_trips.length, (index) {
+      final start = index * 0.2; // Stagger start time (20% delay for each item)
+      return Tween<Offset>(begin: Offset(1, 0), end: Offset(0, 0)).animate(
+        CurvedAnimation(
+          parent: _controller,
+          curve: Interval(start, 1.0, curve: Curves.easeOut),
+        ),
+      );
+    });
+
+    // Start the animations
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _controller.forward();
       _addLists();
     });
   }
 
   @override
   void dispose() {
+    _controller.dispose();
     super.dispose();
   }
-  void _addLists(){
-    List<Trip> _trips=[
-      Trip(title: 'Beach Paradise', price: '350', nights: '3', img: 'beach.png'),
-      Trip(title: 'City Break', price: '400', nights: '5', img: 'city.png'),
-      Trip(title: 'Ski Adventure', price: '750', nights: '2', img: 'ski.png'),
-      Trip(title: 'Space Blast', price: '600', nights: '4', img: 'space.png'),];
-_trips.forEach((Trip trip){
-  _tripTiles.add(_buildTrip(trip));
-  _listkey.currentState?.insertItem(_tripTiles.length-1);
-});
 
+  void _addLists() {
+    for (int i = 0; i < _trips.length; i++) {
+      _tripTiles.add(_buildTrip(_trips[i], i));
+      _listkey.currentState?.insertItem(i);
+    }
   }
-  
-  Widget _buildTrip(Trip trip){
+
+  Widget _buildTrip(Trip trip, int index) {
     return ListTile(
-      onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailPage(trip:trip)));
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailPage(trip: trip),
+          ),
+        );
       },
-      contentPadding: EdgeInsets.all(25),
+      contentPadding: const EdgeInsets.all(25),
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text('${trip.nights} nights', style: TextStyle(
-            color: Colors.lightBlue,fontSize: 14,fontWeight: FontWeight.bold
-          ),),
-          Text(trip.title, style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal, fontSize: 20),),
+          Text(
+            '${trip.nights} nights',
+            style: const TextStyle(
+              color: Colors.lightBlue,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            trip.title,
+            style: const TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.normal,
+              fontSize: 20,
+            ),
+          ),
         ],
       ),
       leading: ClipRect(
         child: Hero(
           tag: "location-tag-${trip.img}",
-            child: Image.asset("assets/images/${trip.img}", height: 50,)),
+          child: Image.asset("assets/images/${trip.img}", height: 50),
+        ),
       ),
-      trailing: Text("\$${trip.price},")
+      trailing: Text("\$${trip.price},"),
     );
   }
-  
-  Tween<Offset> _offset = Tween(begin: Offset(1,0), end: Offset(0,0));
+
   @override
   Widget build(BuildContext context) {
     return AnimatedList(
-         key: _listkey,
-         initialItemCount: _tripTiles.length,
-        itemBuilder: (context, index, animation){
-           return SlideTransition(
-             child: _tripTiles[index],
-               position: animation.drive(_offset)
-           );
-        },
+      key: _listkey,
+      initialItemCount: _tripTiles.length,
+      itemBuilder: (context, index, animation) {
+        return SlideTransition(
+          position: _animations[index], // Apply staggered animation
+          child: FadeTransition(
+            opacity: animation,
+            child: _tripTiles[index],
+          ),
+        );
+      },
     );
   }
 }
 
-// @override
-// Widget build(BuildContext context) {
-//   return ListView.builder(
-//     key: _listkey,
-//     itemCount: _tripTiles.length,
-//     itemBuilder: (context, index){
-//       return _tripTiles[index];
-//     },
-//   );
-// }
-// }
