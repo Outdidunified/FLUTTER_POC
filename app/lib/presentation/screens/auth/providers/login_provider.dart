@@ -1,10 +1,15 @@
 import 'dart:async';
-import 'package:ecomweb/logic/cubit/user/user_cubit.dart';
-import 'package:ecomweb/logic/cubit/user/user_state.dart';
+import 'package:app/logic/cubit/user/user_cubit.dart';
+import 'package:app/logic/cubit/user/user_state.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginProvider with ChangeNotifier {
+  final BuildContext context;
+  LoginProvider(this.context) {
+    _listenToUserCubit();
+  }
+
   bool isLoading = false;
   String error = "";
 
@@ -13,17 +18,19 @@ class LoginProvider with ChangeNotifier {
   final formKey = GlobalKey<FormState>();
   StreamSubscription? _userSubscription;
 
-  void _listenToUserCubit(BuildContext context) {
+  void _listenToUserCubit() {
     _userSubscription = BlocProvider.of<UserCubit>(context).stream.listen((userState) {
-      if (userState is UserLoadingState) {
+      if(userState is UserLoadingState) {
         isLoading = true;
         error = "";
         notifyListeners();
-      } else if (userState is UserErrorState) {
+      }
+      else if(userState is UserErrorState) {
         isLoading = false;
         error = userState.message;
         notifyListeners();
-      } else {
+      }
+      else {
         isLoading = false;
         error = "";
         notifyListeners();
@@ -31,20 +38,13 @@ class LoginProvider with ChangeNotifier {
     });
   }
 
-  void logIn(BuildContext context) async {
-    if (!formKey.currentState!.validate()) return;
+  void logIn() async {
+    if(!formKey.currentState!.validate()) return;
 
     String email = emailController.text.trim();
     String password = passwordController.text.trim();
 
-    final userCubit = BlocProvider.of<UserCubit>(context, listen: false);
-    if (userCubit == null) {
-      error = "Authentication service is unavailable.";
-      notifyListeners();
-      return;
-    }
-
-    userCubit.signIn(email: email, password: password);
+    BlocProvider.of<UserCubit>(context).signIn(email: email, password: password);
   }
 
   @override

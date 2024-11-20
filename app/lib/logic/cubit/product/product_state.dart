@@ -1,4 +1,4 @@
-import 'package:ecomweb/data/models/product/product_model.dart';
+import 'package:app/data/models/product/product_model.dart';
 
 abstract class ProductState {
   final List<ProductModel> products;

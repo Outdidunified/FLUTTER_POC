@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:ecomweb/data/models/order/order_model.dart';
-import 'package:ecomweb/logic/cubit/cart/cart_cubit.dart';
-import 'package:ecomweb/logic/cubit/order/order_state.dart';
-import 'package:ecomweb/logic/services/calculations.dart';
+import 'package:app/data/models/order/order_model.dart';
+import 'package:app/logic/cubit/cart/cart_cubit.dart';
+import 'package:app/logic/cubit/order/order_state.dart';
+import 'package:app/logic/services/calculations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/models/cart/cart_item_model.dart';
 import '../user/user_cubit.dart';

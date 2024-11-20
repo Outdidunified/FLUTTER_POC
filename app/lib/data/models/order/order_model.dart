@@ -1,6 +1,6 @@
-import 'package:ecomweb/data/models/cart/cart_item_model.dart';
-import 'package:ecomweb/data/models/user/user_model.dart';
-import 'package:ecomweb/data/models/cart/cart_item_model.dart';
+import 'package:app/data/models/cart/cart_item_model.dart';
+import 'package:app/data/models/user/user_model.dart';
+import 'package:app/data/models/cart/cart_item_model.dart';
 import 'package:equatable/equatable.dart';
 
 import '../user/user_model.dart';

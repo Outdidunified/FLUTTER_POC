@@ -13,7 +13,6 @@ class UserModel {
   String? createdOn;
   String? profileImage; // New field for profile image URL or path
 
-  // Constructor with named parameters
   UserModel({
     this.sId,
     this.fullName,
@@ -27,42 +26,40 @@ class UserModel {
     this.id,
     this.updatedOn,
     this.createdOn,
-    this.profileImage, // Adding profile image to the constructor
+    this.profileImage,
   });
 
-  // Named constructor to create UserModel from a JSON response
   UserModel.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'];
-    fullName = json['fullName'];
-    email = json['email'];
-    password = json['password'];
-    phoneNumber = json['phoneNumber'];
-    address = json['address'];
-    city = json['city'];
-    state = json['state'];
-    profileProgress = json['profileProgress'];
-    id = json['id'];
-    updatedOn = json['updatedOn'];
-    createdOn = json['createdOn'];
-    profileImage = json['profileImage']; // Deserialize the profile image field
+    sId = json['_id'] ?? ''; // Default empty if null
+    fullName = json['fullName'] ?? '';
+    email = json['email'] ?? '';
+    password = json['password']; // Allow null
+    phoneNumber = json['phoneNumber'] ?? '';
+    address = json['address'] ?? '';
+    city = json['city'] ?? '';
+    state = json['state'] ?? '';
+    profileProgress = json['profileProgress'] ?? 0; // Default to 0
+    id = json['id'] ?? '';
+    updatedOn = json['updatedOn'] ?? '';
+    createdOn = json['createdOn'] ?? '';
+    profileImage = json['profileImage'] ?? '';
   }
 
-  // Method to convert UserModel to a JSON map for API request
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['_id'] = this.sId;
-    data['fullName'] = this.fullName;
-    data['email'] = this.email;
-    data['password'] = this.password;
-    data['phoneNumber'] = this.phoneNumber;
-    data['address'] = this.address;
-    data['city'] = this.city;
-    data['state'] = this.state;
-    data['profileProgress'] = this.profileProgress;
-    data['id'] = this.id;
-    data['updatedOn'] = this.updatedOn;
-    data['createdOn'] = this.createdOn;
-    data['profileImage'] = this.profileImage; // Serialize the profile image field
-    return data;
+    return {
+      '_id': sId,
+      'fullName': fullName,
+      'email': email,
+      'password': password,
+      'phoneNumber': phoneNumber,
+      'address': address,
+      'city': city,
+      'state': state,
+      'profileProgress': profileProgress,
+      'id': id,
+      'updatedOn': updatedOn,
+      'createdOn': createdOn,
+      'profileImage': profileImage,
+    };
   }
 }

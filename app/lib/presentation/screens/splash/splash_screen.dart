@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ecomweb/logic/cubit/user/user_cubit.dart';
-import 'package:ecomweb/logic/cubit/user/user_state.dart';
-import 'package:ecomweb/presentation/screens/auth/login_screen.dart';
-import 'package:ecomweb/presentation/screens/home/home_screen.dart';
+import 'package:app/logic/cubit/user/user_cubit.dart';
+import 'package:app/logic/cubit/user/user_state.dart';
+import 'package:app/presentation/screens/auth/login_screen.dart';
+import 'package:app/presentation/screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {

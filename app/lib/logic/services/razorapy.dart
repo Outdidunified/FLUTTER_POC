@@ -1,4 +1,4 @@
-import 'package:ecomweb/data/models/order/order_model.dart';
+import 'package:app/data/models/order/order_model.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class RazorPayServices {

@@ -1,4 +1,5 @@
-import 'package:ecomweb/data/models/user/user_model.dart';
+import 'package:app/data/models/user/user_model.dart';
+
 abstract class UserState {}
 
 class UserInitialState extends UserState {}
@@ -17,4 +18,10 @@ class UserErrorState extends UserState {
   final String message;
 
   UserErrorState(this.message);
+}
+
+class UserCreatedState extends UserState {
+  final String message;
+
+  UserCreatedState(this.message);
 }

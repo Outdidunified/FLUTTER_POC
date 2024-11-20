@@ -1,12 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:ecomweb/Presentation/screens/products/product_screen.dart';
-import 'package:ecomweb/logic/cubit/product/product_cubit.dart';
-import 'package:ecomweb/logic/cubit/product/product_state.dart';
+import 'package:app/Presentation/screens/products/product_screen.dart';
+import 'package:app/logic/cubit/product/product_cubit.dart';
+import 'package:app/logic/cubit/product/product_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ecomweb/data/models/product/product_model.dart';
-import 'package:ecomweb/logic/services/formatter.dart';
-import 'package:ecomweb/core/ui.dart';
+import 'package:app/data/models/product/product_model.dart';
+import 'package:app/logic/services/formatter.dart';
+import 'package:app/core/ui.dart';
 
 class UserFeedScreen extends StatefulWidget {
   const UserFeedScreen({super.key});

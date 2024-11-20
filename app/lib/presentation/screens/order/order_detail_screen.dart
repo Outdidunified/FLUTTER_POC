@@ -1,23 +1,23 @@
 import 'dart:developer';
 
-import 'package:ecomweb/core/ui.dart';
-import 'package:ecomweb/data/models/order/order_model.dart';
-import 'package:ecomweb/data/models/user/user_model.dart';
-import 'package:ecomweb/logic/cubit/cart/cart_cubit.dart';
-import 'package:ecomweb/logic/cubit/cart/cart_state.dart';
-import 'package:ecomweb/logic/cubit/order/order_cubit.dart';
-import 'package:ecomweb/logic/cubit/user/user_cubit.dart';
-import 'package:ecomweb/logic/cubit/user/user_state.dart';
-import 'package:ecomweb/Presentation/screens/order/order_placed_screen.dart';
-import 'package:ecomweb/Presentation/screens/order/provider/order_detail_provider.dart';
-import 'package:ecomweb/presentation/screens/user/edit_profile_screen.dart';
-import 'package:ecomweb/presentation/widgets/gap_widgets.dart';
-import 'package:ecomweb/presentation/widgets/primary_button.dart';
+import 'package:app/core/ui.dart';
+import 'package:app/data/models/order/order_model.dart';
+import 'package:app/data/models/user/user_model.dart';
+import 'package:app/logic/cubit/cart/cart_cubit.dart';
+import 'package:app/logic/cubit/cart/cart_state.dart';
+import 'package:app/logic/cubit/order/order_cubit.dart';
+import 'package:app/logic/cubit/user/user_cubit.dart';
+import 'package:app/logic/cubit/user/user_state.dart';
+import 'package:app/Presentation/screens/order/order_placed_screen.dart';
+import 'package:app/Presentation/screens/order/provider/order_detail_provider.dart';
+import 'package:app/presentation/screens/user/edit_profile_screen.dart';
+import 'package:app/presentation/widgets/gap_widgets.dart';
+import 'package:app/presentation/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-import 'package:ecomweb/Presentation/widgets/cart_list_view.dart';
-import 'package:ecomweb/logic/services/razorapy.dart';
+import 'package:app/Presentation/widgets/cart_list_view.dart';
+import 'package:app/logic/services/razorapy.dart';
 
 class OrderDetailScreen extends StatefulWidget {
   const OrderDetailScreen({super.key});
@@ -38,7 +38,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       ),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(4),
           children: [
             // User details section
             BlocBuilder<UserCubit, UserState>(
@@ -106,8 +106,6 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
             Divider(
               color: Colors.grey[300],
               thickness: 1,
-              indent: 0,
-              endIndent: 0,
             ),
             const GapWidget(size: 10),
 
@@ -132,7 +130,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
                 return CartListView(
                   items: state.items,
-                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  noScroll: true,  // Passing noScroll here instead of 'physics'
                 );
               },
             ),
@@ -141,8 +140,6 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
             Divider(
               color: Colors.grey[300],
               thickness: 1,
-              indent: 0,
-              endIndent: 0,
             ),
             const GapWidget(size: 10),
 
@@ -155,28 +152,26 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               ),
             ),
             const GapWidget(),
-            Consumer<OrderDetailProvider>(
-              builder: (context, provider, child) {
-                return Column(
-                  children: [
-                    RadioListTile(
-                      value: "pay-on-delivery",
-                      groupValue: provider.paymentMethod,
-                      contentPadding: EdgeInsets.zero,
-                      onChanged: provider.changePaymentMethod,
-                      title: const Text("Pay on Delivery"),
-                    ),
-                    RadioListTile(
-                      value: "pay-now",
-                      groupValue: provider.paymentMethod,
-                      contentPadding: EdgeInsets.zero,
-                      onChanged: provider.changePaymentMethod,
-                      title: const Text("Pay Now"),
-                    ),
-                  ],
-                );
-              },
-            ),
+            Consumer<OrderDetailProvider>(builder: (context, provider, child) {
+              return Column(
+                children: [
+                  RadioListTile(
+                    value: "pay-on-delivery",
+                    groupValue: provider.paymentMethod,
+                    contentPadding: EdgeInsets.zero,
+                    onChanged: provider.changePaymentMethod,
+                    title: const Text("Pay on Delivery"),
+                  ),
+                  RadioListTile(
+                    value: "pay-now",
+                    groupValue: provider.paymentMethod,
+                    contentPadding: EdgeInsets.zero,
+                    onChanged: provider.changePaymentMethod,
+                    title: const Text("Pay Now"),
+                  ),
+                ],
+              );
+            }),
             const GapWidget(),
 
             // Place Order button
@@ -227,4 +222,3 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     );
   }
 }
-

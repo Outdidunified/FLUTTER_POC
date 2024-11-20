@@ -1,18 +1,15 @@
-import 'dart:io';
-import 'package:ecomweb/core/ui.dart';
-import 'package:ecomweb/data/models/user/user_model.dart';
-import 'package:ecomweb/logic/cubit/user/user_cubit.dart';
-import 'package:ecomweb/logic/cubit/user/user_state.dart';
+
+import 'package:app/data/models/user/user_model.dart';
+import 'package:app/logic/cubit/user/user_cubit.dart';
+import 'package:app/logic/cubit/user/user_state.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:ecomweb/presentation/widgets/link_button.dart';
-import 'package:ecomweb/presentation/screens/user/edit_profile_screen.dart';
+import 'package:app/presentation/widgets/link_button.dart';
+import 'package:app/presentation/screens/user/edit_profile_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-//import 'package:ecomweb/presentation/screens/ser/languages.dart'; // Import for the languages screen
-import 'package:ecomweb/logic/cubit/theme/theme_cubit.dart';
-import 'package:ecomweb/Presentation/screens/order/my_order_screen.dart';
+import 'package:app/logic/cubit/theme/theme_cubit.dart';
+import 'package:app/presentation/screens/order/my_order_screen.dart';
 
 class TextStyles {
   static const TextStyle heading2 = TextStyle(
@@ -41,44 +38,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  File? _profileImage;
-  final ImagePicker _picker = ImagePicker();
-
-  // Method to pick image from gallery or camera
-  Future<void> _pickImage() async {
-    try {
-      final pickedFile = await showDialog<ImageSource>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Pick an image'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(ImageSource.camera),
-                child: Text('Camera'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(ImageSource.gallery),
-                child: Text('Gallery'),
-              ),
-            ],
-          );
-        },
-      );
-      if (pickedFile != null) {
-        final XFile? file = await _picker.pickImage(source: pickedFile);
-        if (file != null) {
-          setState(() {
-            _profileImage = File(file.path);
-          });
-        }
-      }
-    } catch (e) {
-      // Handle the error
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to pick image')));
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,22 +65,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            GestureDetector(
-              onTap: _pickImage, // Allow image picking on tap
-              child: CircleAvatar(
-                radius: 60,
-                // Larger radius for better visibility
-                backgroundImage: _profileImage == null
-                    ? (userModel.profileImage != null &&
-                    userModel.profileImage!.isNotEmpty)
-                    ? CachedNetworkImageProvider(userModel.profileImage ?? '')
-                    : const NetworkImage('https://via.placeholder.com/150') as ImageProvider<Object>
-                    : FileImage(_profileImage!) as ImageProvider<Object>,
-                // Use FileImage if the user selected an image
-                child: _profileImage == null
-                    ? const Icon(Icons.camera_alt, color: Colors.black)
-                    : null,
-              ),
+            // Profile Image is no longer clickable or changeable
+            CircleAvatar(
+              radius: 60,
+              backgroundImage: userModel.profileImage != null && userModel.profileImage!.isNotEmpty
+                  ? CachedNetworkImageProvider(userModel.profileImage ?? '')
+                  : const NetworkImage('https://via.placeholder.com/150') as ImageProvider<Object>,
             ),
             const SizedBox(height: 16),
             Text(
@@ -159,7 +108,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         // Account Settings Section
         Text(
           "Account Settings",
-          style: TextStyles.heading2.copyWith(fontWeight: FontWeight.w500, fontSize: 24),
+          style: TextStyles.heading2.copyWith(fontWeight: FontWeight.w500, fontSize: 18),
         ),
         const SizedBox(height: 16),
         // Select Language Section
@@ -171,7 +120,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           },
           contentPadding: EdgeInsets.zero,
           leading: const Icon(Icons.notifications),
-          title: Text("Notification Settings", style: TextStyles.body1,),
+          title: Text("Notification Settings", style: TextStyles.body1),
           trailing: Icon(Icons.arrow_forward_ios, size: 16),
         ),
         const Divider(),

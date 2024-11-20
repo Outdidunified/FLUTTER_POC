@@ -1,5 +1,5 @@
-import 'package:ecomweb/data/repositories/product_repository.dart';
-import 'package:ecomweb/logic/cubit/product/product_state.dart';
+import 'package:app/data/repositories/product_repository.dart';
+import 'package:app/logic/cubit/product/product_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProductCubit extends Cubit<ProductState> {

@@ -1,4 +1,4 @@
-import 'package:ecomweb/data/models/cart/cart_item_model.dart';
+import 'package:app/data/models/cart/cart_item_model.dart';
 
 abstract class CartState {
   final List<CartItemModel> items;

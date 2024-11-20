@@ -1,10 +1,10 @@
-import 'package:ecomweb/core/ui.dart';
-import 'package:ecomweb/data/models/user/user_model.dart';
-import 'package:ecomweb/logic/cubit/user/user_cubit.dart';
-import 'package:ecomweb/logic/cubit/user/user_state.dart';
-import 'package:ecomweb/presentation/widgets/gap_widgets.dart';
-import 'package:ecomweb/presentation/widgets/primary_button.dart';
-import 'package:ecomweb/presentation/widgets/primary_textfield.dart';
+import 'package:app/core/ui.dart';
+import 'package:app/data/models/user/user_model.dart';
+import 'package:app/logic/cubit/user/user_cubit.dart';
+import 'package:app/logic/cubit/user/user_state.dart';
+import 'package:app/presentation/widgets/gap_widgets.dart';
+import 'package:app/presentation/widgets/primary_button.dart';
+import 'package:app/presentation/widgets/primary_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -25,36 +25,41 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         title: const Text("Edit Profile"),
       ),
       body: SafeArea(
-        child: BlocBuilder<UserCubit, UserState>(
-          builder: (context, state) {
-            if (state is UserLoadingState) {
-              return const Center(child: CircularProgressIndicator());
-            }
+          child: BlocBuilder<UserCubit, UserState>(
+              builder: (context, state) {
 
-            if (state is UserErrorState) {
-              return Center(child: Text(state.message));
-            }
+                if(state is UserLoadingState) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
 
-            if (state is UserLoggedInState) {
-              return editProfile(state.userModel, context); // Pass context here
-            }
+                if(state is UserErrorState) {
+                  return Center(
+                    child: Text(state.message),
+                  );
+                }
 
-            return const Center(child: Text("An error occurred!"));
-          },
-        ),
+                if(state is UserLoggedInState) {
+                  return editProfile(state.userModel);
+                }
+
+                return const Center(
+                  child: Text("An error occured!"),
+                );
+              }
+          )
       ),
     );
   }
 
-  Widget editProfile(UserModel userModel, BuildContext context) {
+  Widget editProfile(UserModel userModel) {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        Text(
-          "Personal Details",
-          style: TextStyles.body1(context).copyWith(fontWeight: FontWeight.bold), // Use body1 with context and then copyWith
-        ),
-        const GapWidget(size: 10),
+
+        Text("Personal Details", style: TextStyles.body1.copyWith(fontWeight: FontWeight.bold)),
+        const GapWidget(size: -10,),
         PrimaryTextField(
           initialValue: userModel.fullName,
           onChanged: (value) {
@@ -62,7 +67,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           },
           labelText: "Full Name",
         ),
+
         const GapWidget(),
+
         PrimaryTextField(
           initialValue: userModel.phoneNumber,
           onChanged: (value) {
@@ -71,12 +78,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           labelText: "Phone Number",
         ),
 
-        const GapWidget(size: 10),
-        Text(
-          "Address",
-          style: TextStyles.body1(context).copyWith(fontWeight: FontWeight.bold), // Use body1 with context and then copyWith
-        ),
-        const GapWidget(size: 10),
+        const GapWidget(size: 20),
+        Text("Address", style: TextStyles.body1.copyWith(fontWeight: FontWeight.bold)),
+        const GapWidget(size: -10,),
+
         PrimaryTextField(
           initialValue: userModel.address,
           onChanged: (value) {
@@ -84,7 +89,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           },
           labelText: "Address",
         ),
+
         const GapWidget(),
+
         PrimaryTextField(
           initialValue: userModel.city,
           onChanged: (value) {
@@ -92,7 +99,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           },
           labelText: "City",
         ),
+
         const GapWidget(),
+
         PrimaryTextField(
           initialValue: userModel.state,
           onChanged: (value) {
@@ -100,17 +109,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           },
           labelText: "State",
         ),
+
         const GapWidget(),
+
         PrimaryButton(
-          onPressed: () async {
-            bool success = await BlocProvider.of<UserCubit>(context).updateUser(userModel);
-            if (success) {
-              Navigator.pop(context);
-            }
-          },
-          text: "Save",
+            onPressed: () async {
+              bool success = await BlocProvider.of<UserCubit>(context).updateUser(userModel);
+              if(success) {
+                Navigator.pop(context);
+              }
+            },
+            text: "Save"
         ),
+
       ],
     );
   }
+
 }

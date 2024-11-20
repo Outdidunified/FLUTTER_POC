@@ -1,103 +1,122 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ecomweb/logic/cubit/cart/cart_cubit.dart';
-import 'package:ecomweb/data/models/cart/cart_item_model.dart';
+import 'package:app/logic/cubit/cart/cart_cubit.dart';
+import 'package:app/data/models/cart/cart_item_model.dart';
 import 'package:input_quantity/input_quantity.dart';
-import 'package:ecomweb/logic/services/formatter.dart';
+import 'package:app/logic/services/formatter.dart';
 import 'link_button.dart';
 
 class CartListView extends StatelessWidget {
   final List<CartItemModel> items;
-  final ScrollPhysics? physics;
+  final bool shrinkWrap;
+  final bool noScroll;
 
   const CartListView({
     super.key,
     required this.items,
-    this.physics,
+    this.shrinkWrap = false,
+    this.noScroll = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      shrinkWrap: true,
-      physics: physics ?? const NeverScrollableScrollPhysics(),
+      physics: noScroll ? const NeverScrollableScrollPhysics() : null,
+      shrinkWrap: shrinkWrap,
       itemCount: items.length,
       itemBuilder: (context, index) {
         final item = items[index];
 
-        return Container(
-          margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.white,
+        return Card(
+          elevation: 4,
+          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
-            border: Border.all(color: Colors.white.withOpacity(0.5), width: 1),
           ),
-          child: Row(
-            children: [
-              // Larger Product Image without Box Shadow
-              CachedNetworkImage(
-                imageUrl: item.product!.images![0],
-                width: 120,
-                height: 120,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => const CircularProgressIndicator(),
-              ),
-              const SizedBox(width: 15),
-              // Product Details
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.product!.brand!,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      "${Formatter.formatPrice(item.product!.price!)} x ${item.quantity} = ${Formatter.formatPrice(item.product!.price! * item.quantity!)}",
-                      style: const TextStyle(
-                        color: Colors.black87,
-                        fontSize: 15,
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    // Remove Button
-                    LinkButton(
-                      onPressed: () {
-                        BlocProvider.of<CartCubit>(context).removeFromCart(item.product!);
-                      },
-                      text: "Remove",
-                      color: Colors.red,
-                    ),
-                  ],
-                ),
-              ),
-              // Quantity Selector with Enhanced Styling
-              Theme(
-                data: ThemeData(
-                  primaryColor: Colors.blueGrey,
-                  textTheme: const TextTheme(
-                    bodyMedium: TextStyle(color: Colors.blueGrey),
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Image Section
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: CachedNetworkImage(
+                    width: 120,
+                    height: 170,
+                    fit: BoxFit.cover,
+                    imageUrl: item.product!.images![0],
+                    placeholder: (context, url) => const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => Icon(Icons.error, size: 50, color: Colors.redAccent),
                   ),
                 ),
-                child: InputQty(
-                  maxVal: 99,
-                  initVal: item.quantity!,
-                  minVal: 1,
-                  showMessageLimit: false,
-                  onQtyChanged: (value) {
-                    if (value == item.quantity) return;
-                    BlocProvider.of<CartCubit>(context).addToCart(item.product!, value as int);
-                  },
+                const SizedBox(width: 20),
+
+                // Details Section
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Product Name
+                      Text(
+                        item.product?.brand ?? 'Product Name',
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 8),
+
+                      // Price and Quantity
+                      Row(
+                        children: [
+                          Text(
+                            "${Formatter.formatPrice(item.product!.price!)} x ${item.quantity} = ${Formatter.formatPrice(item.product!.price! * item.quantity!)}",
+                            style: const TextStyle(fontSize: 11, color: Colors.grey),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+
+                      // Quantity Input
+                      Container(
+                        width: 160,
+                        child: InputQty(
+                          maxVal: 99,
+                          initVal: item.quantity!,
+                          minVal: 1,
+                          btnColor1: Colors.grey[200] ?? Colors.black,
+                          btnColor2: Colors.grey[200] ?? Colors.black,
+                          onQtyChanged: (value) {
+                            if (value != item.quantity) {
+                              BlocProvider.of<CartCubit>(context).addToCart(item.product!, value as int);
+                            }
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+
+                      // Remove Button
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: LinkButton(
+                          onPressed: () {
+                            BlocProvider.of<CartCubit>(context).removeFromCart(item.product!);
+                          },
+                          text: "Remove",
+                          color: Colors.redAccent,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ecomweb/logic/cubit/cart/cart_cubit.dart';
-import 'package:ecomweb/logic/cubit/user/user_cubit.dart';
-import 'package:ecomweb/presentation/screens/cart/cart_screen.dart';
-import 'package:ecomweb/Presentation/screens/home/user_feed_screen.dart';
-import 'package:ecomweb/Presentation/screens/home/wishlist_screen.dart';
-import 'package:ecomweb/Presentation/screens/home/profile_feed_screen.dart';
-import 'package:ecomweb/presentation/screens/splash/splash_screen.dart';
+import 'package:app/logic/cubit/cart/cart_cubit.dart';
+import 'package:app/logic/cubit/user/user_cubit.dart';
+import 'package:app/presentation/screens/cart/cart_screen.dart';
+import 'package:app/Presentation/screens/home/user_feed_screen.dart';
+import 'package:app/Presentation/screens/home/wishlist_screen.dart';
+import 'package:app/Presentation/screens/home/profile_feed_screen.dart';
+import 'package:app/presentation/screens/splash/splash_screen.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:ecomweb/logic/cubit/user/user_state.dart';
-import 'package:ecomweb/logic/cubit/cart/cart_state.dart';
+import 'package:app/logic/cubit/user/user_state.dart';
+import 'package:app/logic/cubit/cart/cart_state.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

@@ -1,8 +1,9 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:ecomweb/core/api.dart';
-import 'package:ecomweb/data/models/product/product_model.dart';
+import 'package:app/core/api.dart';
+//import 'package:app//data/models/category/category_model.dart';
+import 'package:app/data/models/product/product_model.dart';
 
 class ProductRepository {
   final _api = Api();
@@ -24,5 +25,6 @@ class ProductRepository {
     }
   }
 
-}
 
+
+}
