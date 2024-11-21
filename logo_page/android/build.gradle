@@ -1,3 +1,15 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        // Make sure this matches your Gradle Wrapper version
+        classpath 'com.android.tools.build:gradle:8.0.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0" // Add Kotlin plugin if needed
+    }
+}
+
 allprojects {
     repositories {
         google()
@@ -6,13 +18,17 @@ allprojects {
 }
 
 rootProject.buildDir = "../build"
+
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
+
 subprojects {
+    // If ':app' is not the only subproject, this can cause unnecessary evaluation. Remove if not required.
     project.evaluationDependsOn(":app")
 }
 
+// Clean task for the project
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
