@@ -2,6 +2,7 @@ import 'package:app/data/models/product/product_model.dart';
 
 abstract class ProductState {
   final List<ProductModel> products;
+
   ProductState(this.products);
 }
 
@@ -10,14 +11,19 @@ class ProductInitialState extends ProductState {
 }
 
 class ProductLoadingState extends ProductState {
-  ProductLoadingState(super.products);
+  ProductLoadingState(List<ProductModel> products) : super(products);
 }
 
 class ProductLoadedState extends ProductState {
-  ProductLoadedState(super.products);
+  ProductLoadedState(List<ProductModel> products) : super(products);
+}
+
+class ProductOrderSuccessState extends ProductState {
+  final String message;
+  ProductOrderSuccessState(this.message) : super([]);
 }
 
 class ProductErrorState extends ProductState {
-  final String message;
-  ProductErrorState(this.message, super.products);
+  final String error;
+  ProductErrorState(this.error, List<ProductModel> products) : super(products);
 }

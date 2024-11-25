@@ -72,24 +72,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ? CachedNetworkImageProvider(userModel.profileImage ?? '')
                   : const NetworkImage('https://via.placeholder.com/150') as ImageProvider<Object>,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 5),
             Text(
               "${userModel.fullName}",
               style: TextStyles.heading3.copyWith(fontSize: 25, fontWeight: FontWeight.w600), // Increased size and weight
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 3),
             Text(
               "${userModel.email}",
               style: TextStyles.body2.copyWith(fontSize: 18, fontWeight: FontWeight.w500), // Increased size and weight
             ),
-            const SizedBox(height: 5),
+            const SizedBox(height: 1),
             LinkButton(
               onPressed: () {
                 Navigator.pushNamed(context, EditProfileScreen.routeName);
               },
               text: "Edit Profile",  // Pass a String here, not a Text widget
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 3),
           ],
         ),
         const Divider(),

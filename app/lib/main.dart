@@ -7,6 +7,7 @@ import 'package:app/logic/cubit/order/order_cubit.dart';
 import 'package:app/logic/cubit/theme/theme_cubit.dart'; // Import ThemeCubit
 import 'package:app/presentation/screens/splash/splash_screen.dart';
 import 'package:app/core/routes.dart';
+import 'package:app/logic/cubit/category/category_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +23,7 @@ class EcommerceApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => UserCubit()),
         BlocProvider(create: (context) => ProductCubit()),
+        BlocProvider(create: (context) => CategoryCubit()),
         BlocProvider(create: (context) => CartCubit(BlocProvider.of<UserCubit>(context))),
         BlocProvider(create: (context) => OrderCubit(BlocProvider.of<UserCubit>(context), BlocProvider.of<CartCubit>(context))),
         BlocProvider(create: (context) => ThemeCubit()), // Add ThemeCubit here

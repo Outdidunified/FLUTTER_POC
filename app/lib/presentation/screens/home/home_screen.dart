@@ -5,7 +5,7 @@ import 'package:app/logic/cubit/cart/cart_cubit.dart';
 import 'package:app/logic/cubit/user/user_cubit.dart';
 import 'package:app/presentation/screens/cart/cart_screen.dart';
 import 'package:app/Presentation/screens/home/user_feed_screen.dart';
-import 'package:app/Presentation/screens/home/wishlist_screen.dart';
+import 'package:app/presentation/screens/home/category_screen.dart';
 import 'package:app/Presentation/screens/home/profile_feed_screen.dart';
 import 'package:app/presentation/screens/splash/splash_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,42 +22,43 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   int currentIndex = 0;
   List<Widget> screens = const [
     UserFeedScreen(),
-    WishlistScreen(),
-    ProfileScreen()
+    CategoryScreen(),
+    ProfileScreen(),
   ];
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<UserCubit, UserState>(
       listener: (context, state) {
-        if(state is UserLoggedOutState) {
+        if (state is UserLoggedOutState) {
           Navigator.pushReplacementNamed(context, SplashScreen.routeName);
         }
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Ecommerce App"),
+          title: const Text("Ev Chargers"),
+          backgroundColor: Colors.blueGrey, // Set AppBar background color
           actions: [
             IconButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, CartScreen.routeName);
+              onPressed: () {
+                Navigator.pushNamed(context, CartScreen.routeName);
+              },
+              icon: BlocBuilder<CartCubit, CartState>(
+                builder: (context, state) {
+                  return Badge(
+                    label: Text("${state.items.length}"),
+                    isLabelVisible: (state is CartLoadingState) ? false : true,
+                    child: const Icon(CupertinoIcons.cart_fill),
+                  );
                 },
-                icon: BlocBuilder<CartCubit, CartState>(
-                    builder: (context, state) {
-                      return Badge(
-                          label: Text("${state.items.length}"),
-                          isLabelVisible: (state is CartLoadingState) ? false : true,
-                          child: const Icon(CupertinoIcons.cart_fill)
-                      );
-                    }
-                )
+              ),
             ),
           ],
         ),
-        body: screens[currentIndex],
+        body: screens[currentIndex], // Correct placement of body
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: currentIndex,
           onTap: (index) {
@@ -67,18 +68,16 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           items: const [
             BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: "Home"
+              icon: Icon(Icons.home),
+              label: "Home",
             ),
-
             BottomNavigationBarItem(
-                icon: Icon(Icons.category),
-                label: "Categories"
+              icon: Icon(Icons.category),
+              label: "Categories",
             ),
-
             BottomNavigationBarItem(
-                icon: Icon(Icons.person),
-                label: "Profile"
+              icon: Icon(Icons.person),
+              label: "Profile",
             ),
           ],
         ),

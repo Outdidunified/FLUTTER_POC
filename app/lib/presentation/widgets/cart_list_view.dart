@@ -75,7 +75,7 @@ class CartListView extends StatelessWidget {
                         children: [
                           Text(
                             "${Formatter.formatPrice(item.product!.price!)} x ${item.quantity} = ${Formatter.formatPrice(item.product!.price! * item.quantity!)}",
-                            style: const TextStyle(fontSize: 11, color: Colors.grey),
+                            style: const TextStyle(fontSize: 12, color: Colors.grey),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),

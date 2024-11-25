@@ -1,11 +1,11 @@
 import 'dart:developer';
-
 import 'package:app/core/ui.dart';
 import 'package:app/data/models/order/order_model.dart';
 import 'package:app/data/models/user/user_model.dart';
 import 'package:app/logic/cubit/cart/cart_cubit.dart';
 import 'package:app/logic/cubit/cart/cart_state.dart';
 import 'package:app/logic/cubit/order/order_cubit.dart';
+import 'package:app/logic/cubit/order/order_state.dart';
 import 'package:app/logic/cubit/user/user_cubit.dart';
 import 'package:app/logic/cubit/user/user_state.dart';
 import 'package:app/Presentation/screens/order/order_placed_screen.dart';
@@ -40,7 +40,6 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
         child: ListView(
           padding: const EdgeInsets.all(4),
           children: [
-            // User details section
             BlocBuilder<UserCubit, UserState>(
               builder: (context, state) {
                 if (state is UserLoadingState) {
@@ -52,43 +51,18 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "User Details",
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
+                      Text("User Details", style: TextStyle(fontSize: 22, fontWeight: FontWeight.normal)),
                       const GapWidget(),
-                      Text("${user.fullName}",
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          )),
-                      Text("Email: ${user.email}",
-                          style: TextStyle(fontSize: 18)),
-                      Text("Phone: ${user.phoneNumber}",
-                          style: TextStyle(fontSize: 18)),
-                      Text(
-                        "Address: ${user.address}, ${user.city}, ${user.state}",
-                        style: TextStyle(fontSize: 18),
-                      ),
+                      Text("${user.fullName}", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                      Text("Email: ${user.email}", style: TextStyle(fontSize: 18)),
+                      Text("Phone: ${user.phoneNumber}", style: TextStyle(fontSize: 18)),
+                      Text("Address: ${user.address}, ${user.city}, ${user.state}", style: TextStyle(fontSize: 18)),
                       const SizedBox(height: 10),
-                      // Edit Profile button
                       TextButton(
                         onPressed: () {
                           Navigator.pushNamed(context, EditProfileScreen.routeName);
                         },
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: Size.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          textStyle: TextStyle(
-                            fontSize: 20,
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap, textStyle: TextStyle(fontSize: 20, color: Colors.blue, fontWeight: FontWeight.bold)),
                         child: const Text("Edit Profile"),
                       ),
                     ],
@@ -103,20 +77,9 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               },
             ),
             const GapWidget(size: 10),
-            Divider(
-              color: Colors.grey[300],
-              thickness: 1,
-            ),
+            Divider(color: Colors.grey[300], thickness: 1),
             const GapWidget(size: 10),
-
-            // Items list section
-            Text(
-              "Items",
-              style: TextStyle(
-                fontSize: 23,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            Text("Items", style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold)),
             const GapWidget(),
             BlocBuilder<CartCubit, CartState>(
               builder: (context, state) {
@@ -136,23 +99,12 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               },
             ),
             const GapWidget(size: 10),
-
-            Divider(
-              color: Colors.grey[300],
-              thickness: 1,
-            ),
+            Divider(color: Colors.grey[300], thickness: 1),
             const GapWidget(size: 10),
-
-            // Payment section
-            Text(
-              "Payment",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            Text("Payment", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
             const GapWidget(),
             Consumer<OrderDetailProvider>(builder: (context, provider, child) {
+              log("Selected Payment Method: ${provider.paymentMethod}");
               return Column(
                 children: [
                   RadioListTile(
@@ -167,58 +119,112 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     groupValue: provider.paymentMethod,
                     contentPadding: EdgeInsets.zero,
                     onChanged: provider.changePaymentMethod,
-                    title: const Text("Pay Now"),
+                    title: const Text("Pay Now (Razorpay)"),
                   ),
                 ],
               );
             }),
-            const GapWidget(),
-
-            // Place Order button
+            const GapWidget(size: 15),
             PrimaryButton(
               onPressed: () async {
-                OrderModel? newOrder = await BlocProvider.of<OrderCubit>(context).createOrder(
-                  items: BlocProvider.of<CartCubit>(context).state.items,
-                  paymentMethod: Provider.of<OrderDetailProvider>(context, listen: false)
-                      .paymentMethod
-                      .toString(),
-                );
+                log("Placing order...");
 
-                if (newOrder == null) return;
-
-                if (newOrder.status == "payment-pending") {
-                  await RazorPayServices.checkoutOrder(
-                    newOrder,
-                    onSuccess: (response) async {
-                      newOrder.status = "order-placed";
-
-                      bool success = await BlocProvider.of<OrderCubit>(context)
-                          .updateOrder(newOrder, paymentId: response.paymentId, signature: response.signature);
-
-                      if (!success) {
-                        log("Can't update the order!");
-                        return;
-                      }
-
-                      Navigator.popUntil(context, (route) => route.isFirst);
-                      Navigator.pushNamed(context, OrderPlacedScreen.routeName);
-                    },
-                    onFailure: (response) {
-                      log("Payment Failed!");
-                    },
-                  );
+                var cartItems = BlocProvider.of<CartCubit>(context).state.items;
+                if (cartItems.isEmpty) {
+                  log("No items in the cart.");
+                  return;
                 }
 
-                if (newOrder.status == "order-placed") {
+                String paymentMethod = Provider.of<OrderDetailProvider>(context, listen: false).paymentMethod.toString();
+                log("Payment Method: $paymentMethod");
+
+                OrderModel? newOrder = await BlocProvider.of<OrderCubit>(context).createOrder(
+                  items: cartItems,
+                  paymentMethod: paymentMethod,
+                );
+
+                if (newOrder == null) {
+                  log("Order creation failed.");
+                  return;
+                }
+
+                log("Order created, proceeding with payment...");
+
+                // Continue with the payment process and cart clearing after success
+                if (newOrder.status == "payment-pending") {
+                  bool? completePayment = await _showPaymentDialog(context, newOrder);
+                  if (completePayment == true) {
+                    // Proceed with Razorpay payment
+                    await RazorPayServices.checkoutOrder(
+                      newOrder,
+                      onSuccess: (response) async {
+                        log("Payment Success: $response");
+                        newOrder.status = "order-placed"; // Update status after payment success
+
+                        try {
+                          bool success = await BlocProvider.of<OrderCubit>(context).updateOrder(
+                            newOrder,
+                            paymentId: response.paymentId,
+                            signature: response.signature,
+                          );
+
+                          if (success) {
+                            log("Order updated successfully!");
+                            // Clear the cart only after successful payment and order placement
+                            BlocProvider.of<CartCubit>(context).clearCart();
+
+                            Navigator.popUntil(context, (route) => route.isFirst);
+                            Navigator.pushNamed(context, OrderPlacedScreen.routeName);
+                          } else {
+                            log("Order update failed!");
+                          }
+                        } catch (e) {
+                          log("Error updating order: $e");
+                        }
+                      },
+                      onFailure: (response) {
+                        log("Payment Failed: $response");
+                        // Handle failure gracefully
+                      },
+                    );
+                  }
+                } else if (newOrder.status == "order-placed") {
+                  // If the order is placed without payment, directly clear the cart
+                  BlocProvider.of<CartCubit>(context).clearCart();
+
                   Navigator.popUntil(context, (route) => route.isFirst);
                   Navigator.pushNamed(context, OrderPlacedScreen.routeName);
                 }
               },
               text: "Place Order",
-            ),
+            )
+
           ],
         ),
       ),
     );
+  }
+
+  Future<bool?> _showPaymentDialog(BuildContext context, OrderModel order) async {
+    return showDialog<bool>(context: context, builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text("Confirm Payment"),
+        content: const Text("Do you want to proceed with the payment?"),
+        actions: <Widget>[
+          TextButton(
+            child: const Text("No"),
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+          ),
+          TextButton(
+            child: const Text("Yes"),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+          ),
+        ],
+      );
+    });
   }
 }

@@ -7,6 +7,7 @@ import 'package:app/logic/services/formatter.dart';
 import 'package:app/presentation/widgets/gap_widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/core/ui.dart';
+import 'order_detail_screen.dart';
 
 class MyOrderScreen extends StatefulWidget {
   const MyOrderScreen({super.key});
@@ -27,117 +28,179 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
       body: SafeArea(
         child: BlocBuilder<OrderCubit, OrderState>(
           builder: (context, state) {
-            // Handle loading state
             if (state is OrderLoadingState && state.orders.isEmpty) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return const Center(child: CircularProgressIndicator());
             }
-
-            // Handle error state
             if (state is OrderErrorState && state.orders.isEmpty) {
               return Center(
-                child: Text(state.message),
+                child: Text(state.message ?? "An error occurred"),
               );
             }
 
-            // Main list of orders
-            return ListView.separated(
+            return ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: state.orders.length,
-              separatorBuilder: (context, index) {
-                return Column(
-                  children: [
-                    const GapWidget(),
-                    Divider(color: AppColors.textLight),
-                    const GapWidget(),
-                  ],
-                );
-              },
               itemBuilder: (context, index) {
                 final order = state.orders[index];
 
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Order ID
-                    Text(
-                      "# - ${order.sId}",
-                      style: TextStyles.body2.copyWith(color: AppColors.textLight),
-                    ),
+                return Card(
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Header: Order ID, Date, Status
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // Header: Order ID, Date, Status
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Order ID: ${order.sId ?? 'N/A'}", // No truncation
+                                  style: TextStyles.body1.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14, // Reduced font size
+                                  ),
+                                  softWrap: true, // Allow wrapping to next line
+                                ),
+                                const SizedBox(height: 4), // Add space between lines
+                                Text(
+                                  "Date: ${Formatter.formatDate(order.createdOn ?? DateTime.now())}",
+                                  style: TextStyles.body2.copyWith(
+                                    color: AppColors.textLight,
+                                  ),
+                                ),
+                                const SizedBox(height: 4), // Add space between lines
+                                Text(
+                                  "Status: ${order.status ?? 'Unknown'}",
+                                  style: TextStyles.body2.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: order.status == "order-placed"
+                                        ? AppColors.success
+                                        : AppColors.error,
+                                  ),
+                                ),
+                              ],
+                            ),
 
-                    // Order Date
-                    Text(
-                      Formatter.formatDate(order.createdOn!),
-                      style: TextStyles.body2.copyWith(color: AppColors.accent),
-                    ),
-
-                    // Order Total
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Text(
-                        "Order Total: ${Formatter.formatPrice(Calculations.cartTotal(order.items!))}",
-                        style: TextStyles.body1.copyWith(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18, // Increased font size for better visibility
-                          color: Colors.white, // Use black or another contrasting color for better visibility
+                          ],
                         ),
-                      ),
-                    ),
+                        const GapWidget(),
 
-                    // List of items in the order
-                    ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: order.items!.length,
-                      itemBuilder: (context, index) {
-                        final item = order.items![index];
-                        final product = item.product!;
+                        // Items in the order
+                        Column(
+                          children: order.items!.map((item) {
+                            final product = item.product!;
 
-                        return ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          leading: CachedNetworkImage(
-                            imageUrl: product.images![0],
-                            placeholder: (context, url) =>
-                            const CircularProgressIndicator(),
-                            errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
-                            width: 80, // Increased image size
-                            height: 80, // Increased image size
-                            fit: BoxFit.cover, // Ensure proper scaling of image
-                          ),
-                          title: Text(
-                            "${product.brand}",
-                            style: TextStyles.body1.copyWith(
-                                fontSize: 16, color: Colors.white), // Adjusted font color
-                          ),
-                          subtitle: Text("Qty: ${item.quantity}"),
-                          trailing: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              // Product price
-                              Text(
-                                Formatter.formatPrice(product.price! * item.quantity!),
-                                style: TextStyles.body2.copyWith(fontSize: 14,color: Colors.white),
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Product Image
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: CachedNetworkImage(
+                                      imageUrl: product.images?.first ??
+                                          'https://example.com/placeholder.png',
+                                      placeholder: (context, url) =>
+                                      const CircularProgressIndicator(),
+                                      errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
+                                      width: 60,
+                                      height: 60,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+
+                                  // Product Details
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          product.brand ?? 'Unknown Brand',
+                                          style: TextStyles.body1.copyWith(
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          "Qty: ${item.quantity ?? 0}",
+                                          style: TextStyles.body2.copyWith(
+                                            color: AppColors.textLight,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+
+                                  // Product Price
+                                  Text(
+                                    Formatter.formatPrice(
+                                      (product.price ?? 0) *
+                                          (item.quantity ?? 1),
+                                    ),
+                                    style: TextStyles.body2.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-
-                    // Order status
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Text(
-                        "Status: ${order.status}",
-                        style: TextStyles.body2.copyWith(
-                          fontSize: 14,
-                          color: Colors.white, // Use a darker color for the status text
+                            );
+                          }).toList(),
                         ),
-                      ),
+                        const GapWidget(),
+
+                        // Order Total
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Total",
+                              style: TextStyles.body1.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              Formatter.formatPrice(
+                                Calculations.cartTotal(order.items!),
+                              ),
+                              style: TextStyles.body1.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const GapWidget(),
+
+                        // Action Button
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                OrderDetailScreen.routeName,
+                                arguments: order,
+                              );
+                            },
+                            child: const Text("View Details"),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 );
               },
             );

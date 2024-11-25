@@ -12,10 +12,7 @@ class CartCubit extends Cubit<CartState> {
   StreamSubscription? _userSubscription;
 
   CartCubit(this._userCubit) : super(CartInitialState()) {
-    // initial Value
     _handleUserState(_userCubit.state);
-
-    // Listening to User Cubit (for future updates)
     _userSubscription = _userCubit.stream.listen(_handleUserState);
   }
 
@@ -84,11 +81,7 @@ class CartCubit extends Cubit<CartState> {
   bool cartContains(ProductModel product) {
     if (state.items.isNotEmpty) {
       final foundItem = state.items.where((item) => item.product!.sId! == product.sId!).toList();
-      if (foundItem.isNotEmpty) {
-        return true;
-      } else {
-        return false;
-      }
+      return foundItem.isNotEmpty;
     }
     return false;
   }
@@ -96,6 +89,30 @@ class CartCubit extends Cubit<CartState> {
   void clearCart() {
     emit(CartLoadedState([]));
   }
+
+  void removeItemsAfterPayment(List<CartItemModel> items) async {
+    // Remove items from cart after payment is successful
+    emit(CartLoadingState(state.items));
+    try {
+      if (_userCubit.state is UserLoggedInState) {
+        UserLoggedInState userState = _userCubit.state as UserLoggedInState;
+
+        // Loop through the items and remove them one by one
+        for (var item in items) {
+          await _cartRepository.removeFromCart(item.product!.sId!, userState.userModel.sId!);
+        }
+
+        // After removing all items, load the updated cart
+        final updatedItems = await _cartRepository.fetchCartForUser(userState.userModel.sId!);
+        sortAndLoad(updatedItems);
+      } else {
+        throw Exception("User is not logged in.");
+      }
+    } catch (ex) {
+      _handleError(ex);
+    }
+  }
+
 
   void _handleError(Object ex) {
     String errorMessage = "An unknown error occurred";
