@@ -1,22 +1,18 @@
+
 const OrderModel = require('./../models/order_model');
 const CartModel = require('./../models/cart_model');
 const razorpay = require('../razorpay');
 
 const OrderController = {
 
+    // Create Order (Same as before)
     createOrder: async function(req, res) {
         try {
             const { user, items, status, totalAmount } = req.body;
 
-            // Log the totalAmount to verify it's correct
-            console.log('Total Amount:', totalAmount);
-
-            // Ensure totalAmount is in INR and multiply by 100 to convert to paise
-            const amountInPaise = totalAmount * 100;
-
             // Create Order in RazorPay
             const razorPayOrder = await razorpay.orders.create({
-                amount: amountInPaise, // Amount in paise (1 INR = 100 paise)
+                amount: totalAmount * 100,
                 currency: "INR"
             });
 
@@ -29,7 +25,7 @@ const OrderController = {
             });
             await newOrder.save();
 
-            // Update the cart by clearing items
+            // Update the cart
             await CartModel.findOneAndUpdate(
                 { user: user._id },
                 { items: [] }
@@ -38,19 +34,11 @@ const OrderController = {
             return res.json({ success: true, data: newOrder, message: "Order created!" });
         }
         catch(ex) {
-            // If Razorpay returns a specific error, extract the message
-            if (ex.response && ex.response.body && ex.response.body.error) {
-                return res.json({
-                    success: false,
-                    message: ex.response.body.error.description || 'Error while creating the order'
-                });
-            }
-
-            // Return generic error message if not Razorpay-specific
-            return res.json({ success: false, message: ex.message });
+            return res.json({ success: false, message: ex });
         }
     },
 
+    // Fetch Orders for User (Same as before)
     fetchOrdersForUser: async function(req, res) {
         try {
             const userId = req.params.userId;
@@ -60,10 +48,11 @@ const OrderController = {
             return res.json({ success: true, data: foundOrders });
         }
         catch(ex) {
-            return res.json({ success: false, message: ex.message });
+            return res.json({ success: false, message: ex });
         }
     },
 
+    // Update Order Status (Same as before)
     updateOrderStatus: async function(req, res) {
         try {
             const { orderId, status, razorPayPaymentId, razorPaySignature } = req.body;
@@ -79,7 +68,44 @@ const OrderController = {
             return res.json({ success: true, data: updatedOrder });
         }
         catch(ex) {
-            return res.json({ success: false, message: ex.message });
+            return res.json({ success: false, message: ex });
+        }
+    },
+
+    // Handle Pending Payment and Allow Completion
+    completePayment: async function(req, res) {
+        try {
+            const { orderId, userId } = req.body;
+
+            // Find the order by ID
+            const order = await OrderModel.findById(orderId);
+
+            if (!order) {
+                return res.json({ success: false, message: "Order not found!" });
+            }
+
+            if (order.status !== "pending") {
+                return res.json({ success: false, message: "Payment is already completed or cancelled!" });
+            }
+
+            // Initiate Razorpay payment again for pending payment
+            const razorPayOrder = await razorpay.orders.create({
+                amount: order.totalAmount * 100,
+                currency: "INR"
+            });
+
+            // Update the order with the new Razorpay order ID (to allow completion of payment)
+            order.razorPayOrderId = razorPayOrder.id;
+            await order.save();
+
+            return res.json({
+                success: true,
+                data: { razorPayOrderId: razorPayOrder.id },
+                message: "Payment can now be completed."
+            });
+
+        } catch (ex) {
+            return res.json({ success: false, message: ex });
         }
     }
 
