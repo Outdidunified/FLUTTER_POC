@@ -8,6 +8,9 @@ import 'package:newapp/core/ui.dart';
 import 'package:newapp/logic/services/formatter.dart';
 import 'package:newapp/presentation/screens/home/filter_screen.dart';
 import 'package:newapp/presentation/screens/products/product_screen.dart';
+import 'package:share_plus/share_plus.dart';
+
+
 
 class UserFeedScreen extends StatefulWidget {
   const UserFeedScreen({super.key});
@@ -40,6 +43,12 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
             (product.chargerType?.toLowerCase().contains(searchText) ?? false) ||
             (product.connector?.type?.toLowerCase().contains(searchText) ?? false);
       }).toList();
+    });
+  }
+
+  void _updateRating(ProductModel product, double newRating) {
+    setState(() {
+      product.averageRating = newRating;
     });
   }
 
@@ -125,10 +134,8 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
                                       width: double.infinity,
                                       height: 220,
                                       fit: BoxFit.cover,
-                                      placeholder: (context, url) =>
-                                      const CircularProgressIndicator(),
-                                      errorWidget: (context, url, error) =>
-                                      const Icon(Icons.error),
+                                      placeholder: (context, url) => const CircularProgressIndicator(),
+                                      errorWidget: (context, url, error) => const Icon(Icons.error),
                                     ),
                                     Container(
                                       width: double.infinity,
@@ -156,10 +163,7 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
                                         style: TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.w600,
-                                          color: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium!
-                                              .color,
+                                          color: Theme.of(context).textTheme.bodyMedium!.color,
                                         ),
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
@@ -184,9 +188,29 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
                                           ),
                                         ),
                                       const SizedBox(height: 10),
+                                      // Adding rating display with a star icon
+                                      if (product.averageRating != null)
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.star,
+                                              color: Colors.yellow[700],
+                                              size: 18,
+                                            ),
+                                            const SizedBox(width: 5),
+                                            Text(
+                                              product.averageRating!.toStringAsFixed(1),
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.blueGrey,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      const SizedBox(height: 10),
                                       Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
                                             product.price != null
@@ -195,17 +219,26 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
                                             style: TextStyle(
                                               fontSize: 21,
                                               fontWeight: FontWeight.bold,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .primary,
+                                              color: Theme.of(context).colorScheme.primary,
                                             ),
                                           ),
                                           IconButton(
                                             icon: const Icon(Icons.share),
                                             onPressed: () {
-                                              // Handle Share feature
+                                              // Prepare the content you want to share
+                                              String shareText = '''
+    Check out this product:
+    ${product.description ?? "No description available"}
+    Price: ${product.price != null ? Formatter.formatPrice(product.price!) : "Price not available"}
+    Charger Type: ${product.chargerType ?? "N/A"}
+    Connector Type: ${product.connector?.type ?? "N/A"}
+    Rating: ${product.averageRating != null ? product.averageRating!.toStringAsFixed(1) : "N/A"}
+    ''';
+
+                                              // Share the content using the share package
+                                              Share.share(shareText);
                                             },
-                                          ),
+                                          )
                                         ],
                                       ),
                                     ],

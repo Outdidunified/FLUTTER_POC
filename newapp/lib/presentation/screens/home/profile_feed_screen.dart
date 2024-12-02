@@ -105,25 +105,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         const SizedBox(height: 5),
         const Divider(),
-        // Account Settings Section
-        Text(
-          "Account Settings",
-          style: TextStyles.heading2.copyWith(fontWeight: FontWeight.w500, fontSize: 18),
-        ),
-        const SizedBox(height: 16),
-        // Select Language Section
-        const Divider(),
         // Notification Settings Section
-        ListTile(
-          onTap: () {
-            // Handle notification settings
-          },
-          contentPadding: EdgeInsets.zero,
-          leading: const Icon(Icons.notifications),
-          title: Text("Notification Settings", style: TextStyles.body1),
-          trailing: Icon(Icons.arrow_forward_ios, size: 16),
-        ),
-        const Divider(),
+
         // Theme Settings Section
         ListTile(
           onTap: () {

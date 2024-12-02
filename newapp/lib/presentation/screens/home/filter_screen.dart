@@ -13,10 +13,13 @@ class FilterPage extends StatefulWidget {
 class _FilterPageState extends State<FilterPage> {
   String? selectedConnectorType;
   String? selectedChargerType;
+  String? selectedRating;
+
   String? activeFilterCategory = 'Connector Type';
 
   final connectorTypes = ['Single', 'Dual'];
   final chargerTypes = ['AC', 'DC'];
+  final ratingOptions = ['4.5+', '4.0+', '3.5+', '3.0+', '2.0+'];
 
   @override
   void initState() {
@@ -30,6 +33,7 @@ class _FilterPageState extends State<FilterPage> {
     setState(() {
       selectedConnectorType = prefs.getString('connectorType');
       selectedChargerType = prefs.getString('chargerType');
+      selectedRating = prefs.getString('rating');
     });
   }
 
@@ -38,6 +42,7 @@ class _FilterPageState extends State<FilterPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('connectorType', selectedConnectorType ?? '');
     prefs.setString('chargerType', selectedChargerType ?? '');
+    prefs.setString('rating', selectedRating ?? '');
   }
 
   // Clear selected filters and reset the active category
@@ -45,6 +50,7 @@ class _FilterPageState extends State<FilterPage> {
     setState(() {
       selectedConnectorType = null;
       selectedChargerType = null;
+      selectedRating = null;
       activeFilterCategory = 'Connector Type';
     });
     context.read<ProductCubit>().fetchAllProducts();
@@ -56,6 +62,7 @@ class _FilterPageState extends State<FilterPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('connectorType');
     prefs.remove('chargerType');
+    prefs.remove('rating');
   }
 
   // Get the filter count for each category
@@ -64,6 +71,8 @@ class _FilterPageState extends State<FilterPage> {
       return selectedConnectorType != null ? '(1)' : '';
     } else if (filterType == 'Charger Type') {
       return selectedChargerType != null ? '(1)' : '';
+    } else if (filterType == 'Ratings') {
+      return selectedRating != null ? '(1)' : '';
     }
     return '';
   }
@@ -78,7 +87,7 @@ class _FilterPageState extends State<FilterPage> {
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
-        ...['Connector Type', 'Charger Type'].map(
+        ...['Connector Type', 'Charger Type', 'Ratings'].map(
               (category) => Padding(
             padding: const EdgeInsets.only(bottom: 12.0),
             child: _buildFilterCategoryItem(category),
@@ -111,6 +120,24 @@ class _FilterPageState extends State<FilterPage> {
 
   // Build the filter options based on selected category
   Widget _buildFilterOptions() {
+    if (activeFilterCategory == 'Ratings') {
+      return Column(
+        children: ratingOptions.map((rating) {
+          return RadioListTile<String>(
+            title: Text(rating),
+            value: rating,
+            groupValue: selectedRating,
+            onChanged: (value) {
+              setState(() {
+                selectedRating = value;
+              });
+              _saveFilters();
+            },
+          );
+        }).toList(),
+      );
+    }
+
     final options = activeFilterCategory == 'Connector Type'
         ? connectorTypes
         : chargerTypes;
@@ -201,7 +228,6 @@ class _FilterPageState extends State<FilterPage> {
                     activeFilterCategory ?? '',
                     style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-
                   _buildFilterOptions(),
                 ],
               ),
@@ -216,9 +242,11 @@ class _FilterPageState extends State<FilterPage> {
           width: double.infinity,
           child: ElevatedButton(
             onPressed: () {
+              // Fetch products based on selected filters, including rating
               context.read<ProductCubit>().fetchProducts(
                 connectorType: selectedConnectorType,
                 chargerType: selectedChargerType,
+                rating: _getRatingFromSelection(selectedRating),
               );
               Navigator.pop(context);
             },
@@ -227,5 +255,23 @@ class _FilterPageState extends State<FilterPage> {
         ),
       ),
     );
+  }
+
+  // Helper function to convert selected rating to double value
+  double? _getRatingFromSelection(String? rating) {
+    switch (rating) {
+      case '4.5+':
+        return 4.5;
+      case '4.0+':
+        return 4.0;
+      case '3.5+':
+        return 3.5;
+      case '3.0+':
+        return 3.0;
+      case '2.0+':
+        return 2.0;
+      default:
+        return null;
+    }
   }
 }

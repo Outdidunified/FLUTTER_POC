@@ -73,14 +73,14 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                                 const SizedBox(height: 4), // Add space between lines
                                 Text(
                                   "Date: ${Formatter.formatDate(order.createdOn ?? DateTime.now())}",
-                                  style: TextStyles.body2.copyWith(
+                                  style: TextStyles.body1.copyWith(
                                     color: AppColors.textLight,
                                   ),
                                 ),
                                 const SizedBox(height: 4), // Add space between lines
                                 Text(
                                   "Status: ${order.status ?? 'Unknown'}",
-                                  style: TextStyles.body2.copyWith(
+                                  style: TextStyles.body1.copyWith(
                                     fontWeight: FontWeight.bold,
                                     color: order.status == "order-placed"
                                         ? AppColors.success
@@ -136,7 +136,7 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                                         const SizedBox(height: 4),
                                         Text(
                                           "Qty: ${item.quantity ?? 0}",
-                                          style: TextStyles.body2.copyWith(
+                                          style: TextStyles.body1.copyWith(
                                             color: AppColors.textLight,
                                           ),
                                         ),
@@ -151,7 +151,7 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                                       (product.price ?? 0) *
                                           (item.quantity ?? 1),
                                     ),
-                                    style: TextStyles.body2.copyWith(
+                                    style: TextStyles.body1.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),

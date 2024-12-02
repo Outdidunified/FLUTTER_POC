@@ -7,9 +7,12 @@ import 'package:newapp/logic/cubit/order/order_cubit.dart';
 import 'package:newapp/logic/cubit/theme/theme_cubit.dart';
 import 'package:newapp/presentation/screens/splash/splash_screen.dart';
 import 'package:newapp/core/routes.dart';
-import 'package:newapp/logic/cubit/category/category_cubit.dart';
+
 import 'package:newapp/logic/cubit/review/review_cubit.dart';
-import 'package:newapp/data/repositories/review_repository.dart'; // Import ReviewRepository
+import 'package:newapp/data/repositories/review_repository.dart';
+import 'package:newapp/logic/cubit/category/category_cubit.dart';
+
+// Import ReviewRepository
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

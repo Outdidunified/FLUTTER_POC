@@ -52,9 +52,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   itemBuilder: (context, index) {
                     final category = state.categories[index];
 
-                    // Asset image path
-                    String assetImagePath = 'assets/evlog.jpg';
-
                     return ListTile(
                       onTap: () {
                         Navigator.pushNamed(
@@ -64,16 +61,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         );
                       },
                       leading: Container(
-                        width: 130, // Increased width for the image
-                        height: 200, // Increased height for the image,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(9.0), // Rounded corners for the image
-                          child: Image.asset(
-                            assetImagePath,
-                            width: 300, // Image width
-                            height: 300, // Image height
-                            fit: BoxFit.cover, // Image fit type
-                          ),
+                        width: 50, // Adjust width for the icon
+                        height: 50, // Adjust height for the icon
+                        child: Icon(
+                          Icons.category, // Category icon
+                          size: 40, // Set icon size
+                          color: Colors.blueGrey, // Set icon color
                         ),
                       ),
                       title: Text(
@@ -81,8 +74,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         style: const TextStyle(
                           fontSize: 20, // Increased font size for category title
                           fontWeight: FontWeight.normal,
-                          color: Colors.lightBlueAccent
-                          // Optional: Make title bold
+                          color: Colors.lightBlueAccent, // Optional: Make title bold
                         ),
                       ),
                       trailing: const Icon(Icons.keyboard_arrow_right),

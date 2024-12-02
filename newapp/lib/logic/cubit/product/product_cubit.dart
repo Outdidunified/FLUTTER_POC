@@ -12,7 +12,7 @@ class ProductCubit extends Cubit<ProductState> {
 
   // Method to initialize and fetch all products initially
   void _initialize() async {
-    emit(ProductLoadingState([]));  // show loading initially
+    emit(ProductLoadingState([]));  // Show loading initially
     try {
       final products = await _productRepository.fetchAllProducts();
       emit(ProductLoadedState(products));
@@ -39,10 +39,13 @@ class ProductCubit extends Cubit<ProductState> {
   void fetchProducts({
     String? connectorType,
     String? chargerType,
+    double? rating,  // Added the rating filter parameter
   }) {
     _fetchProducts(
       fetchFunction: () {
-        if (connectorType != null && chargerType != null) {
+        if (rating != null) {
+          return _productRepository.fetchProductsByMinRating(rating);  // Fetch products by rating
+        } else if (connectorType != null && chargerType != null) {
           return _productRepository.fetchProductsByConnectorAndChargerType(connectorType, chargerType);
         } else if (connectorType != null) {
           return _productRepository.fetchProductsByConnectorType(connectorType);

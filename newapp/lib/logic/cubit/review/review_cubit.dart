@@ -63,12 +63,8 @@ class ReviewCubit extends Cubit<ReviewState> {
         productId: productId,
       );
 
-      final averageRating = reviews.isNotEmpty
-          ? reviews.fold(0, (sum, review) => sum + (review.rating ?? 0)) /
-          reviews.length
-          : 0.0;
-
-      emit(ReviewSuccess(reviews: reviews, averageRating: averageRating)); // Successfully fetched reviews
+      // Emit the state with reviews, without passing 'averageRating'
+      emit(ReviewSuccess(reviews: reviews));
     } catch (ex) {
       emit(ReviewFailure(message: ex.toString())); // Error fetching reviews
     }

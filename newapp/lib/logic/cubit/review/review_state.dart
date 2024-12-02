@@ -10,9 +10,9 @@ class ReviewLoading extends ReviewState {}
 
 class ReviewSuccess extends ReviewState {
   final List<ReviewModel> reviews;
-  final double averageRating;
 
-  const ReviewSuccess({required this.reviews, required this.averageRating});
+  // Removed the 'averageRating' parameter
+  const ReviewSuccess({required this.reviews});
 }
 
 class ReviewFailure extends ReviewState {

@@ -12,8 +12,28 @@ class AppColors {
   static const Color error = Color(0xffdc3545);   // Red for error
 }
 
+
+class TextStyles {
+  static const TextStyle heading2 = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+  );
+  static const TextStyle heading3 = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.bold,
+  );
+  static const TextStyle body1 = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.normal,
+  );
+  static const TextStyle body2 = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.normal,
+  );
+}
+
 class Themes {
-  static ThemeData defaultTheme = ThemeData(
+  static final ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
     scaffoldBackgroundColor: AppColors.white,
     appBarTheme: AppBarTheme(
@@ -26,56 +46,37 @@ class Themes {
         color: AppColors.text,
       ),
     ),
+    textTheme: const TextTheme(
+      bodyLarge: TextStyle(color: AppColors.text), // Updated
+      bodyMedium: TextStyle(color: AppColors.textLight), // Updated
+    ),
     colorScheme: const ColorScheme.light(
+      primary: AppColors.accent,
+      secondary: AppColors.accent,
+    ),
+  );
+
+  static final ThemeData darkTheme = ThemeData(
+    brightness: Brightness.dark,
+    scaffoldBackgroundColor: Colors.black,
+    appBarTheme: AppBarTheme(
+      elevation: 0,
+      backgroundColor: Colors.black,
+      iconTheme: const IconThemeData(color: Colors.white),
+      titleTextStyle: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.w500,
+        color: Colors.white,
+      ),
+    ),
+    textTheme: const TextTheme(
+      bodyLarge: TextStyle(color: Colors.white), // Updated
+      bodyMedium: TextStyle(color: Colors.grey), // Updated
+    ),
+    colorScheme: const ColorScheme.dark(
       primary: AppColors.accent,
       secondary: AppColors.accent,
     ),
   );
 }
 
-class TextStyles {
-  // Headings
-  static const TextStyle heading1 = TextStyle(
-    fontWeight: FontWeight.bold,
-    color: AppColors.text,
-    fontSize: 48,
-  );
-
-  static const TextStyle heading2 = TextStyle(
-    fontWeight: FontWeight.bold,
-    color: AppColors.text,
-    fontSize: 32,
-  );
-
-  static const TextStyle heading3 = TextStyle(
-    fontWeight: FontWeight.bold,
-    color: AppColors.text,
-    fontSize: 24,
-  );
-
-  // Body Text
-  static const TextStyle body1 = TextStyle(
-    fontWeight: FontWeight.normal,
-    color: AppColors.text,
-    fontSize: 18,
-  );
-
-  static const TextStyle body2 = TextStyle(
-    fontWeight: FontWeight.normal,
-    color: AppColors.text,
-    fontSize: 16,
-  );
-
-  // Status Text Styles
-  static const TextStyle success = TextStyle(
-    fontWeight: FontWeight.bold,
-    color: AppColors.success,
-    fontSize: 16,
-  );
-
-  static const TextStyle error = TextStyle(
-    fontWeight: FontWeight.bold,
-    color: AppColors.error,
-    fontSize: 16,
-  );
-}

@@ -6,13 +6,14 @@ import 'package:newapp/data/models/product/product_model.dart';
 import 'package:newapp/logic/cubit/cart/cart_cubit.dart';
 import 'package:newapp/logic/cubit/review/review_cubit.dart';
 import 'package:newapp/logic/cubit/review/review_state.dart';
-import 'package:newapp/logic/cubit/user/user_cubit.dart';
 import 'package:newapp/logic/cubit/cart/cart_state.dart';
 import 'package:newapp/Presentation/widgets/primary_button.dart';
 import 'package:newapp/data/models/review/review_model.dart';
 import 'package:newapp/logic/services/formatter.dart';
 import 'package:intl/intl.dart';
+import 'package:newapp/logic/cubit/user/user_cubit.dart';
 import 'package:newapp/logic/cubit/user/user_state.dart';
+import 'package:newapp/core/ui.dart'; // Importing UI styles
 
 class ProductDetailsScreen extends StatefulWidget {
   static const routeName = '/product-details';
@@ -44,8 +45,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.productModel.brand ?? "Product Details"),
-        backgroundColor: Colors.blueGrey,
+        title: Text(widget.productModel.brand ?? "Product Details", style: TextStyles.heading2),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       ),
       body: SafeArea(
         child: ListView(
@@ -78,43 +79,17 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 children: [
                   Text(
                     widget.productModel.brand ?? "Unknown Brand",
-                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.deepPurple),
+                    style: TextStyles.heading3.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color,fontSize: 20,),
                   ),
                   SizedBox(height: 8),
                   Text(
                     Formatter.formatPrice(widget.productModel.price ?? 0),
-                    style: TextStyle(fontSize: 20, color: Colors.green),
+                    style: TextStyles.body1.copyWith(
+                      color: AppColors.success,
+                      fontSize: 20, // Increase the font size here
+                    ),
                   ),
                   SizedBox(height: 8),
-
-                  // Ratings Section
-                  BlocBuilder<ReviewCubit, ReviewState>(
-                    builder: (context, state) {
-                      if (state is ReviewLoading) {
-                        return Center(child: CircularProgressIndicator());
-                      }
-                      if (state is ReviewSuccess) {
-                        double averageRating = state.averageRating ?? 0.0;
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: List.generate(5, (index) {
-                                return Icon(
-                                  index < averageRating ? Icons.star : Icons.star_border,
-                                  color: Colors.orange,
-                                  size: 24,
-                                );
-                              }),
-                            ),
-                            SizedBox(height: 10),
-                            Divider(color: Colors.grey[300]),
-                          ],
-                        );
-                      }
-                      return Text("No ratings available.");
-                    },
-                  ),
                   SizedBox(height: 16),
 
                   BlocBuilder<CartCubit, CartState>(
@@ -131,23 +106,22 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       );
                     },
                   ),
-                  SizedBox(height: 16),
+                  SizedBox(height: 20),
 
-                  // Product Description
-                  Text("Description", style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text(widget.productModel.description ?? "No description available."),
-                  SizedBox(height: 16),
+                  Text("Description", style: TextStyles.body1.copyWith(fontWeight: FontWeight.bold)),
+                  SizedBox(height: 10),
+                  Text(widget.productModel.description ?? "No description available.", style: TextStyles.body2.copyWith(color: Theme.of(context).textTheme.bodyMedium!.color)),
+                  SizedBox(height: 10),
 
                   Center(
                     child: Text(
                       "Customer Ratings and Reviews",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.deepPurple),
+                      style: TextStyles.body1.copyWith(fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyLarge!.color),
                     ),
                   ),
                   SizedBox(height: 10),
                   Divider(color: Colors.grey[300]),
 
-                  // Reviews Section
                   BlocBuilder<ReviewCubit, ReviewState>(
                     builder: (context, state) {
                       if (state is ReviewLoading) {
@@ -156,7 +130,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       if (state is ReviewSuccess) {
                         List<ReviewModel> reviews = state.reviews;
                         if (reviews.isEmpty) {
-                          return Center(child: Text("No reviews yet."));
+                          return Center(child: Text("No reviews yet.", style: TextStyles.body2.copyWith(color: Theme.of(context).textTheme.bodyMedium!.color)));
                         }
 
                         return ListView.builder(
@@ -168,7 +142,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               elevation: 5,
                               margin: EdgeInsets.symmetric(vertical: 8),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                              color: Colors.white, // Added background color to the card
+                              color: Theme.of(context).scaffoldBackgroundColor,
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Column(
@@ -186,21 +160,28 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           }),
                                         ),
                                         SizedBox(width: 8),
-                                        Text(
-                                          "By ${reviews[index].userId}",
-                                          style: TextStyle(fontSize: 11, color: Colors.black),
+                                        // Modified to handle userId overflow
+                                        Expanded( // Add Expanded widget to prevent overflow
+                                          child: Text(
+                                            "By ${reviews[index].userId}",
+                                            style: TextStyles.body2.copyWith(
+                                              color: Theme.of(context).textTheme.bodyMedium!.color,fontSize: 11,
+                                               // Ensures overflow is handled
+                                            ),
+                                            maxLines: 1, // Limit the text to one line
+                                          ),
                                         ),
                                       ],
                                     ),
                                     SizedBox(height: 8),
                                     Text(
                                       reviews[index].comment ?? "No comment",
-                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                                      style: TextStyles.body2.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color),
                                     ),
                                     SizedBox(height: 8),
                                     Text(
                                       "Posted on ${formatDate(reviews[index].createdOn)}",
-                                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey),
+                                      style: TextStyles.body2.copyWith(color: Theme.of(context).textTheme.bodyMedium!.color),
                                     ),
                                   ],
                                 ),
@@ -209,12 +190,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           },
                         );
                       }
-                      return Text("No reviews available.");
+                      return Text("Please purchase the product to give reviews.", style: TextStyles.body2.copyWith(color: Theme.of(context).textTheme.bodyMedium!.color));
                     },
                   ),
                   SizedBox(height: 16),
 
-                  // Review Submission Section
                   BlocBuilder<UserCubit, UserState>(
                     builder: (context, state) {
                       if (state is UserLoggedInState) {
@@ -227,7 +207,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 labelText: "Add a Comment",
                                 border: OutlineInputBorder(),
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.deepPurple),
+                                  borderSide: BorderSide(color: AppColors.accent),
                                 ),
                               ),
                               onChanged: (value) {
@@ -280,7 +260,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           ],
                         );
                       }
-                      return Container();
+                      return SizedBox.shrink();
                     },
                   ),
                 ],
