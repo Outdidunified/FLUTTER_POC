@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 // import 'package:login_page_new/screens/homepage.dart';
 // import 'package:login_page_new/screens/loginpage.dart';
 import 'package:my_proj/provider/provider.dart';
-import 'package:my_proj/screens/homepage.dart';
+import 'package:my_proj/pages/home/home_layout.dart';
 import 'package:my_proj/screens/loginpage.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,18 +14,71 @@ void main() {
   )) ;
 }
 
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//
+//       color: Colors.black,
+//       debugShowCheckedModeBanner: false,
+//       home: SplashScreen(),
+//     );
+//   }
+// }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      color: Colors.black,
       debugShowCheckedModeBanner: false,
       home: SplashScreen(),
+      theme: ThemeData(
+        // Set the primary color of the app
+        primaryColor: Colors.black,
+
+        // Set the background color of the app
+        scaffoldBackgroundColor: Colors.black,
+
+
+        // Set text theme for the app
+        textTheme: TextTheme(
+          displayLarge: TextStyle(color: Colors.white), // Headline text color
+          displayMedium: TextStyle(color: Colors.white), // Sub-headline text color
+          displaySmall: TextStyle(color: Colors.white), // Sub-sub-headline text color
+          bodyLarge: TextStyle(color: Colors.white), // Body text color
+          bodyMedium: TextStyle(color: Colors.white), // Body text color
+          bodySmall: TextStyle(color: Colors.white), // Smaller body text color
+          labelLarge: TextStyle(color: Colors.white), // Labels text color
+          labelMedium: TextStyle(color: Colors.white), // Labels text color
+          labelSmall: TextStyle(color: Colors.white), // Smaller labels text color
+        ),
+
+        // Set button theme
+        buttonTheme: ButtonThemeData(
+          buttonColor: Colors.white, // Button color
+          textTheme: ButtonTextTheme.primary, // Button text color
+        ),
+
+        // Set the icon theme
+        iconTheme: IconThemeData(
+          color: Colors.white, // Icon color
+        ),
+
+        // App bar theme
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.black, // App bar background color
+          iconTheme: IconThemeData(color: Colors.white), // App bar icon color
+          titleTextStyle: TextStyle(color: Colors.white), // App bar text color
+        ),
+      ),
     );
   }
 }
-
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -56,10 +109,12 @@ class _SplashScreenState extends State<SplashScreen> {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => Homepage(email:email, username: username, userId: userId,),
+            builder: (context) => Homepage(email: email),
             // builder: (context) => Bottomnavigatorpage(),
 
           ));
+
+
     } else {
       // Navigate to the LoginPage
       Navigator.pushReplacement(
@@ -67,6 +122,7 @@ class _SplashScreenState extends State<SplashScreen> {
           MaterialPageRoute(
             builder: (context) => Loginpage(),
           ));
+
     }
   }
 
@@ -78,7 +134,21 @@ class _SplashScreenState extends State<SplashScreen> {
   }
   @override
   Widget build(BuildContext context) {
+
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    String deviceType;
+    if (screenWidth < 600) {
+      deviceType = "Mobile"; // Mobile
+    } else if (screenWidth < 1024) {
+      deviceType = "Tablet"; // Tablet
+    } else if (screenWidth < 1440) {
+      deviceType = "Laptop"; // Laptop
+    } else {
+      deviceType = "Web"; // Web
+    }
     return Scaffold(
+      backgroundColor: Colors.black,
       body: CircularProgressIndicator(),
     );
   }

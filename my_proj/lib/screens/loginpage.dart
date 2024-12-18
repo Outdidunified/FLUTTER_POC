@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:my_proj/provider/provider.dart';
 // import 'package:my_proj/screens/bottomNavigatorPage.dart';
-import 'package:my_proj/screens/homepage.dart';
+import 'package:my_proj/pages/home/home_layout.dart';
+import 'package:my_proj/screens/registerPage.dart';
 import 'package:my_proj/services/api_services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
 
 class Loginpage extends StatefulWidget {
   const Loginpage({super.key});
@@ -17,6 +20,42 @@ class _LoginpageState extends State<Loginpage> {
 
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordcontroller = TextEditingController();
+
+  googleLogin() async {
+    print("Google login method called");
+
+    GoogleSignIn _googleSignIn = GoogleSignIn(scopes: [
+      'email', // Request access to the user's email
+      'profile', // Request access to the user's profile
+    ]);
+
+    try {
+      // Initiating Google Sign-In process
+      var result = await _googleSignIn.signIn();
+
+      if (result != null) {
+        String email = result.email;
+        String id = result.id;
+        int userId = int.parse(id);
+
+        // Update the Provider with the email and userId
+        Provider.of<LoginDataProvider>(context, listen: false)
+            .setEmail(email);
+
+        // Navigating to the homepage after successful login
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Homepage(email: email)),
+        );
+      } else {
+        print("Google login canceled");
+      }
+    } catch (error) {
+      print("Error during Google login: $error");
+      _showMessage("Google login failed. Please try again.");
+    }
+  }
+
 
   bool _isValidEmail(String email) {
     final emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
@@ -62,8 +101,6 @@ class _LoginpageState extends State<Loginpage> {
       await pref.setString("username", username);
       await pref.setString("email_id", email);
 
-
-
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -74,7 +111,9 @@ class _LoginpageState extends State<Loginpage> {
               TextButton(
                 child: const Text("OK"),
                 onPressed: () {
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Homepage(email: email, username: username, userId: userId,)));
+                  Provider.of<LoginDataProvider>(context, listen: false).setData(userId, username, email, '');
+
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Homepage(email: email)));
 
                   // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Bottomnavigatorpage()));
                 },
@@ -106,48 +145,57 @@ class _LoginpageState extends State<Loginpage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
+    return
+      Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
 
-      ),
-      body:Center(
-        child: Container(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                    hintText: "Enter email here",
-                    labelText: "Email",
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)
-                    )
+        ),
+        body:Center(
+          child: Container(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                      hintText: "Enter email here",
+                      labelText: "Email",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10)
+                      )
+                  ),
                 ),
-              ),
-              SizedBox(height: 20,),
+                SizedBox(height: 20,),
 
-              TextField(
-                controller: _passwordcontroller,
-                decoration: InputDecoration(
-                    hintText: "Enter password here",
-                    labelText: "Password",
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)
-                    )
+                TextField(
+                  controller: _passwordcontroller,
+                  decoration: InputDecoration(
+                      hintText: "Enter password here",
+                      labelText: "Password",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10)
+                      )
+                  ),
                 ),
-              ),
-              SizedBox(height: 20,),
+                SizedBox(height: 20,),
 
-              ElevatedButton(onPressed: (){
-                _login();
-              },
-                  child: Text("login"))
-            ],
+                ElevatedButton(onPressed: (){
+                  _login();
+                },
+                    child: Text("login")),
+                TextButton(onPressed: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Registerpage()));
+                }, child: Text("Don't have account? Register here")),
+
+                SizedBox(height: 20,),
+                TextButton(onPressed: (){
+                  googleLogin();
+                }, child: Text("Sign in Through google"))
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
   }
 }

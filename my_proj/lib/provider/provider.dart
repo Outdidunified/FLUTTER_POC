@@ -20,4 +20,9 @@ class LoginDataProvider with ChangeNotifier{
     notifyListeners();
 
   }
+
+  void setEmail(String email) {
+    _email = email;
+    notifyListeners();
+  }
 }

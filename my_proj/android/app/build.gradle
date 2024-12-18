@@ -7,16 +7,15 @@ plugins {
 
 android {
     namespace = "com.example.my_proj"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
-
+    compileSdkVersion = 34
+    ndkVersion = "25.1.8937393"
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        jvmTarget = 17
     }
 
     defaultConfig {
@@ -29,6 +28,16 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
+
+    signingConfigs {
+        debug {
+            keyAlias 'uploadkeystore1'
+            keyPassword 'android'
+            storeFile file('upload-keystore.jks')
+            storePassword 'android'
+        }
+    }
+
 
     buildTypes {
         release {

@@ -1,0 +1,32 @@
+// This is the project-level build.gradle file.
+
+buildscript {
+    repositories {
+        google()  // Ensure you have Google's repository
+        mavenCentral()  // Maven central if needed
+    }
+    dependencies {
+        // Add the classpath for the Android Gradle plugin here
+        classpath 'com.android.tools.build:gradle:8.0.0'  // or another compatible version
+        // Other classpaths if needed (e.g., for Kotlin, Firebase, etc.)
+    }
+}
+
+allprojects {
+    repositories {
+        google()  // Ensure Google repository is added
+        mavenCentral()  // Maven central if needed
+    }
+}
+
+rootProject.buildDir = "../build"  // Optional: customize the build directory
+
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"  // Customize each subproject build dir
+    project.evaluationDependsOn(":app")  // Ensure app project is evaluated before others
+}
+
+// Clean task to delete build directories
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
