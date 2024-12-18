@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_proj/pages/google_map/mappage.dart';
 import 'package:my_proj/provider/provider.dart';
 // import 'package:my_proj/screens/bottomNavigatorPage.dart';
 import 'package:my_proj/pages/home/home_layout.dart';
@@ -35,8 +36,8 @@ class _LoginpageState extends State<Loginpage> {
 
       if (result != null) {
         String email = result.email;
-        String id = result.id;
-        int userId = int.parse(id);
+        // String id = result.id;
+        // int userId = int.parse(id);
 
         // Update the Provider with the email and userId
         Provider.of<LoginDataProvider>(context, listen: false)
@@ -45,7 +46,9 @@ class _LoginpageState extends State<Loginpage> {
         // Navigating to the homepage after successful login
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Homepage(email: email)),
+          // MaterialPageRoute(builder: (context) => Homepage(email: email)),
+          MaterialPageRoute(builder: (context) => MapScreen()),
+
         );
       } else {
         print("Google login canceled");

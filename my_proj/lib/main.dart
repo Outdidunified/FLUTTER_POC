@@ -1,18 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:my_proj/pages/google_map/mappage.dart';
 // import 'package:login_page_new/provider/provider.dart';
 // import 'package:login_page_new/screens/homepage.dart';
 // import 'package:login_page_new/screens/loginpage.dart';
 import 'package:my_proj/provider/provider.dart';
 import 'package:my_proj/pages/home/home_layout.dart';
+import 'package:my_proj/provider/theme_provider.dart';
 import 'package:my_proj/screens/loginpage.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp (ChangeNotifierProvider(create: (_)=>LoginDataProvider(),
-    child: const MyApp(),
-  )) ;
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Create an instance of ThemeProvider
+  final themeProvider = ThemeProvider();
+  await themeProvider.init();
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => LoginDataProvider()),
+        ChangeNotifierProvider(create: (_) => themeProvider),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
+
 
 // class MyApp extends StatelessWidget {
 //   const MyApp({super.key});
@@ -33,51 +47,62 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      color: Colors.black,
-      debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
-      theme: ThemeData(
-        // Set the primary color of the app
-        primaryColor: Colors.black,
-
-        // Set the background color of the app
-        scaffoldBackgroundColor: Colors.black,
-
-
-        // Set text theme for the app
-        textTheme: TextTheme(
-          displayLarge: TextStyle(color: Colors.white), // Headline text color
-          displayMedium: TextStyle(color: Colors.white), // Sub-headline text color
-          displaySmall: TextStyle(color: Colors.white), // Sub-sub-headline text color
-          bodyLarge: TextStyle(color: Colors.white), // Body text color
-          bodyMedium: TextStyle(color: Colors.white), // Body text color
-          bodySmall: TextStyle(color: Colors.white), // Smaller body text color
-          labelLarge: TextStyle(color: Colors.white), // Labels text color
-          labelMedium: TextStyle(color: Colors.white), // Labels text color
-          labelSmall: TextStyle(color: Colors.white), // Smaller labels text color
-        ),
-
-        // Set button theme
-        buttonTheme: ButtonThemeData(
-          buttonColor: Colors.white, // Button color
-          textTheme: ButtonTextTheme.primary, // Button text color
-        ),
-
-        // Set the icon theme
-        iconTheme: IconThemeData(
-          color: Colors.white, // Icon color
-        ),
-
-        // App bar theme
-        appBarTheme: AppBarTheme(
-          backgroundColor: Colors.black, // App bar background color
-          iconTheme: IconThemeData(color: Colors.white), // App bar icon color
-          titleTextStyle: TextStyle(color: Colors.white), // App bar text color
-        ),
-      ),
+    return Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          return MaterialApp(
+            color: Colors.white,
+            debugShowCheckedModeBanner: false,
+            theme: themeProvider.lightTheme,
+            darkTheme: themeProvider.darkTheme,
+            themeMode: themeProvider.isDark ? ThemeMode.dark : ThemeMode.light,
+            // theme: ThemeData.light(), // Light theme
+            // darkTheme: ThemeData.dark(), // Dark theme
+            // themeMode: ThemeProvider().themeMode,
+            home: SplashScreen(),
+            // theme: ThemeData(
+            //   // Set the primary color of the app
+            //   primaryColor: Colors.black,
+            //
+            //   // Set the background color of the app
+            //   scaffoldBackgroundColor: Colors.black,
+            //
+            //
+            //   // Set text theme for the app
+            //   textTheme: TextTheme(
+            //     displayLarge: TextStyle(color: Colors.white), // Headline text color
+            //     displayMedium: TextStyle(color: Colors.white), // Sub-headline text color
+            //     displaySmall: TextStyle(color: Colors.white), // Sub-sub-headline text color
+            //     bodyLarge: TextStyle(color: Colors.white), // Body text color
+            //     bodyMedium: TextStyle(color: Colors.white), // Body text color
+            //     bodySmall: TextStyle(color: Colors.white), // Smaller body text color
+            //     labelLarge: TextStyle(color: Colors.white), // Labels text color
+            //     labelMedium: TextStyle(color: Colors.white), // Labels text color
+            //     labelSmall: TextStyle(color: Colors.white), // Smaller labels text color
+            //   ),
+            //
+            //   // Set button theme
+            //   buttonTheme: ButtonThemeData(
+            //     buttonColor: Colors.white, // Button color
+            //     textTheme: ButtonTextTheme.primary, // Button text color
+            //   ),
+            //
+            //   // Set the icon theme
+            //   iconTheme: IconThemeData(
+            //     color: Colors.white, // Icon color
+            //   ),
+            //
+            //   // App bar theme
+            //   appBarTheme: AppBarTheme(
+            //     backgroundColor: Colors.black, // App bar background color
+            //     iconTheme: IconThemeData(color: Colors.white), // App bar icon color
+            //     titleTextStyle: TextStyle(color: Colors.white), // App bar text color
+            //   ),
+            // ),
+          );
+        }
     );
   }
+
 }
 
 class SplashScreen extends StatefulWidget {
@@ -109,8 +134,8 @@ class _SplashScreenState extends State<SplashScreen> {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => Homepage(email: email),
-            // builder: (context) => Bottomnavigatorpage(),
+            // builder: (context) => Homepage(email: email),
+            builder: (context) => MapScreen(),
 
           ));
 
@@ -135,18 +160,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
 
-    final screenWidth = MediaQuery.of(context).size.width;
-
-    String deviceType;
-    if (screenWidth < 600) {
-      deviceType = "Mobile"; // Mobile
-    } else if (screenWidth < 1024) {
-      deviceType = "Tablet"; // Tablet
-    } else if (screenWidth < 1440) {
-      deviceType = "Laptop"; // Laptop
-    } else {
-      deviceType = "Web"; // Web
-    }
     return Scaffold(
       backgroundColor: Colors.black,
       body: CircularProgressIndicator(),

@@ -83,7 +83,7 @@ class _HomepageState extends State<Homepage> {
     return WillPopScope(
       onWillPop: _onWillPop, // Handle back button press
       child: Scaffold(
-        backgroundColor: Colors.black,
+        // backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text("gmail:$provider", style: TextStyle(fontSize: 15)),
           automaticallyImplyLeading: false,
@@ -109,14 +109,27 @@ class _HomepageState extends State<Homepage> {
                   end: Alignment.centerRight,
                 ),
                 shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color:  Color(0xFFFFD27F).withOpacity(0.8), // Glowing effect color
+                    blurRadius: 20.0,
+                    spreadRadius: 5.0,
+                    offset: Offset(0, 0),
+                  ),
+                ],
               ),
-              child: FloatingActionButton(
-                onPressed: () {
-                  print("Center Button Pressed");
-                },
-                child: Icon(Icons.electric_car, color: Colors.white),
-                backgroundColor: Colors.transparent,
-                elevation: 0,
+              child: Container(
+                height: 60,
+                width: 60,
+                child: FloatingActionButton(
+                  // shape: CircleBorder(),
+                  onPressed: () {
+                    print("Center Button Pressed");
+                  },
+                  child: Icon(Icons.electric_car, color: Colors.white,),
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                ),
               ),
             ),
           ],
@@ -134,3 +147,4 @@ class _HomepageState extends State<Homepage> {
     );
   }
 }
+
