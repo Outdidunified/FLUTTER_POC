@@ -94,12 +94,10 @@ class _HomepageState extends State<Homepage> {
                     controller: _textcontroller,
                     decoration: InputDecoration(
                       hintText: "Enter your input here",
-                  
                     ),
                   ),
                 ),]
               ),
-
             ]
           ),
         ),
